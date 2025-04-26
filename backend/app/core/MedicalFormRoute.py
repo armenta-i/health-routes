@@ -4,5 +4,4 @@ from app.services import supabase_service
 
 router = APIRouter()
 
-class MedicalFormRequest(BaseModel):
-    
+# class MedicalFormRequest(BaseModel):

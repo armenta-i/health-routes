@@ -1,8 +1,29 @@
 import { View, Text, TouchableOpacity, ScrollView, StyleSheet, Image, Dimensions } from 'react-native';
 import { SafeAreaView } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Logout } from './Logout';
+import AppNavigator from '../navigation/AppNavigator';
+
 const screenWidth = Dimensions.get('window').width;
 
 export default function LandingPage({navigation}) {
+  const handleLogout = async () => {
+    // try {
+    //   await AsyncStorage.removeItem('isLoggedIn');
+    //   await AsyncStorage.removeItem('userData');
+    //   await AsyncStorage.removeItem('authToken');
+      
+    //   // Navigate to Auth stack which contains the OnboardingScreen
+    //   navigation.getParent().navigate('Auth');
+      
+    //   console.log('User signed out successfully');
+    // } catch (error) {
+    //   console.error('Error signing out:', error);
+    Logout(navigation, null);
+    // }
+  };
+
+
   return (
     <SafeAreaView style={{ flex: 1 }}>
 
@@ -17,6 +38,14 @@ export default function LandingPage({navigation}) {
           >
             <Text style={styles.navButtonText}>Find Care</Text>
           </TouchableOpacity>
+
+          {/* Logout Button */}
+          <TouchableOpacity
+              style={[styles.navButton, { marginLeft: 10 }]} 
+              onPress={handleLogout}
+            >
+              <Text style={styles.navButtonText}>Logout</Text> 
+            </TouchableOpacity>
         </View>
       </View>
 
@@ -35,18 +64,18 @@ export default function LandingPage({navigation}) {
             <TouchableOpacity style={styles.primaryButton}>
               <Text style={styles.primaryButtonText}>Find Care Now →</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.secondaryButton} onPress={navigation.navigate('Login')}> // REMOVE onPress
+            {/* <TouchableOpacity style={styles.secondaryButton} onPress={navigation.navigate('Login')}> // REMOVE onPress
               <Text style={styles.secondaryButtonText}>Learn More</Text>
-            </TouchableOpacity>
+            </TouchableOpacity> */}
           </View>
         </View>
 
-        <View style={styles.heroImageBlock}>
+        {/* <View style={styles.heroImageBlock}>
           <Image
             source={{ uri: 'https://via.placeholder.com/300x200.png?text=Image' }}
             style={styles.heroImage}
             />
-        </View>
+        </View> */}
       </View>
 
       {/* How Fidari Works */}

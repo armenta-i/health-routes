@@ -5,6 +5,7 @@ import {
     StyleSheet,
     TouchableOpacity
 } from 'react-native';
+import AppNavigator from "../navigation/AppNavigator";
 
 export default function OnboardingScreen({ navigation }) {
     return (

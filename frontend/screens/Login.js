@@ -7,6 +7,9 @@ import {
     TouchableOpacity,
     Alert
 } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import AppNavigator from "../navigation/AppNavigator";
+import { CommonActions } from "@react-navigation/native";
 
 export default function Login({navigation}) {
     const [phoneNumber, setPhoneNumber] = useState('');
@@ -15,7 +18,7 @@ export default function Login({navigation}) {
 
     const handleLogin = async () => {
         console.log("Login Button Pressed");
-        setError(''); // Clear previous errors
+        // setError(''); // Clear previous errors
         
         try {
             const response = await fetch('http://127.0.0.1:8000/login', {
@@ -33,9 +36,12 @@ export default function Login({navigation}) {
 
             if (response.ok) {
                 console.log("Login Successful:", data);
-                // Navigate to main screen or dashboard
                 Alert.alert("Success", "Login successful!");
-                navigation.getParent().replace('Main');
+                
+                await AsyncStorage.setItem('isLoggedIn', 'true');
+            
+                window.location.reload();
+                console.log("Login was succesful");
             } else {
                 console.log("Login Error:", data.detail);
                 
