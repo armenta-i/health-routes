@@ -12,4 +12,4 @@ COPY . .
 
 EXPOSE 8081
 
-CMD ["npm", "start"]
+CMD ["npx", "expo", "start"]
