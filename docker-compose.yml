@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   backend:
     build: ./backend
@@ -11,11 +9,14 @@ services:
       - ./backend:/app
     depends_on:
       - frontend
+    command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload
 
   frontend:
     build: ./frontend
     ports:
       - "8081:8081"
+      - "19000:19000"  # Additional Expo ports
+      - "19001:19001"  # Additional Expo ports
     volumes:
       - ./frontend:/app
       - /app/node_modules

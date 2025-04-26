@@ -17,5 +17,5 @@ app.include_router(ai.router, prefix="/ai")
 app.include_router(workflow.router, prefix="/workflow")
 
 @app.get("/")
-async def root():
-    return {"message": "Backend is running"}
+def read_root():
+    return {"message": "Hello!"}

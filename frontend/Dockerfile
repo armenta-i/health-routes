@@ -13,5 +13,7 @@ RUN npm install -g expo@52.0.46
 COPY . .
 
 EXPOSE 8081
+EXPOSE 19000
+EXPOSE 19001
 
-CMD ["npm", "run", "web"]
+CMD ["npx", "expo", "start"]
