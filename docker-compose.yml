@@ -16,6 +16,8 @@ services:
     build: ./frontend
     ports:
       - "8081:8081"
+      - "19000:19000"  # Additional Expo ports
+      - "19001:19001"  # Additional Expo ports
     volumes:
       - ./frontend:/app
       - /app/node_modules
