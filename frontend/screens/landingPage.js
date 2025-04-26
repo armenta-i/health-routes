@@ -35,7 +35,7 @@ export default function LandingPage({navigation}) {
             <TouchableOpacity style={styles.primaryButton}>
               <Text style={styles.primaryButtonText}>Find Care Now →</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.secondaryButton}>
+            <TouchableOpacity style={styles.secondaryButton} onPress={navigation.navigate('Login')}> // REMOVE onPress
               <Text style={styles.secondaryButtonText}>Learn More</Text>
             </TouchableOpacity>
           </View>
