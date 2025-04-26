@@ -1,10 +1,11 @@
 fastapi
 uvicorn
-supabase
-langchain[openai]
+python-dotenv
+langchain
 openai
 python-dotenv
 llama-index
 littlehorse-client
 aiofiles
-pytest
+supabase
+pydantic-settings

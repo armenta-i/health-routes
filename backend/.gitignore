@@ -1,30 +1,86 @@
-# Ignore virtual environments
-.venv/
-venv/
-ENV/
-env/
+# ┌─────────────────────────────────────────────────────────────────────────────
+# │ Python (backend)
+# └─────────────────────────────────────────────────────────────────────────────
 
-# Ignore Python bytecode and cache files
+# Byte-compiled / cache
 __pycache__/
-*.pyc
-*.pyo
-*.pyd
+*.py[cod]
+*$py.class
 
-# Ignore distribution / packaging
+# Virtual environments
+env/
+venv/
+.venv/
+ENV/
+env.bak/
+venv.bak/
+
+# dotenv files
+.env
+.env.*
+
+# Testing / coverage
+.pytest_cache/
+.coverage
+coverage/
+htmlcov/
+
+# Build / packaging
 build/
 dist/
 *.egg-info/
 
-# Ignore logs
-*.log
+# Jupyter
+.ipynb_checkpoints/
 
-# IDE/editor settings (optional but recommended)
+# ┌─────────────────────────────────────────────────────────────────────────────
+# │ Docker
+# └─────────────────────────────────────────────────────────────────────────────
+
+docker-compose.override.yml
+docker-compose.override.yaml
+
+# ┌─────────────────────────────────────────────────────────────────────────────
+# │ Node / frontend
+# └─────────────────────────────────────────────────────────────────────────────
+
+# Node modules
+node_modules/
+
+# NPM/Yarn logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Expo / React Native
+.expo/
+.expo-shared/
+android/
+ios/
+web-build/
+
+# build outputs (if any)
+dist/
+build/
+
+# ┌─────────────────────────────────────────────────────────────────────────────
+# │ IDEs & OS artifacts
+# └─────────────────────────────────────────────────────────────────────────────
+
+# VS Code
 .vscode/
-.idea/
-*.sublime-project
-*.sublime-workspace
 
-# OS system files (optional)
+# JetBrains
+.idea/
+
+# macOS
 .DS_Store
-Thumbs.db
-Desktop.ini
+.AppleDouble
+.LSOverride
+
+# system thumbnails
+._*
+
+# generic logs
+*.log
