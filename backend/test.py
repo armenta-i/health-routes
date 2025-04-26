@@ -30,7 +30,7 @@ def health_check_supabase():
     # Step 3: Try inserting a test record
     try:
         print("🔵 Trying to insert a test record into 'test_table'...")
-        insert_response = supabase_service.insert_into_test_table(999, "HealthCheckUser")
+        insert_response = supabase_service.insert_into_test_table(9282, "Andre Melendez")
         if insert_response.data is None:
             raise RuntimeError("❌ Insert failed, no data returned.")
 
