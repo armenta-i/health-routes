@@ -1,8 +1,10 @@
 from fastapi import FastAPI
 from app.api import auth, ai, workflow
 from fastapi.middleware.cors import CORSMiddleware
+from app.core.CreateUser_router import router as user_router
 
 app = FastAPI()
+app.include_router(user_router)
 
 app.add_middleware(
     CORSMiddleware,

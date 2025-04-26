@@ -1,9 +1,12 @@
 # backend/app/core/config.py
-
 import os
 from dotenv import load_dotenv
+from pathlib import Path
 
-load_dotenv(dotenv_path="/app/.env")
+BASE_DIR = Path(__file__).resolve().parent.parent.parent  # Move up to backend folder
+env_path = BASE_DIR / '.env'
+
+load_dotenv(dotenv_path=env_path)
 
 SUPABASE_URL = os.getenv("SUPABASE_URL")
 SUPABASE_KEY = os.getenv("SUPABASE_KEY")

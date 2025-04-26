@@ -1,65 +1,62 @@
-import React, {useState} from "react";
+import React from "react";
 import { 
     View, 
     Text, 
-    TextInput,
-    Button,
     StyleSheet,
     TouchableOpacity
 } from 'react-native';
-import { FieldError } from 'react';
-import { NavigationContainer } from "@react-navigation/native";
 
 export default function OnboardingScreen({ navigation }) {
     return (
         <View style={styles.container}>
-            <Text style={styles.header}>Welcome</Text>
+            <Text style={styles.header}>Welcome to Fidari Health</Text>
 
-            {/* First Button */}
+            {/* Login Button */}
             <TouchableOpacity
-                onPress={() => navigation.navigate('Login')
-                }
+                style={styles.button}
+                onPress={() => navigation.navigate('Login')}
             >
-                <Text style={styles.navButton}>Login</Text>
+                <Text style={styles.buttonText}>Login</Text>
             </TouchableOpacity>
 
-            {/* Second Button */}
+            {/* Create Account Button */}
             <TouchableOpacity
+                style={styles.button}
                 onPress={() => navigation.navigate('CreateUser')}
             >
-                <Text style={styles.navButton}>Create Account</Text>
+                <Text style={styles.buttonText}>Create Account</Text>
             </TouchableOpacity>
         </View>
-    )
-};
+    );
+}
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
         padding: 20,
-        paddingTop: 10,
         justifyContent: 'center',
         alignItems: 'center',
-    },
-    input: {
-        height: 40,
-        width: '100%',
-        borderColor: 'gray',
-        borderWidth: 1,
-        marginBottom: 12,
-        paddingHorizontal: 10,
+        backgroundColor: '#f5f5f5',
     },
     header: {
         textAlign: 'center',
-        fontSize: 24,
+        fontSize: 28,
         fontWeight: 'bold',
+        marginBottom: 40,
+        color: '#333',
+    },
+    button: {
+        backgroundColor: '#4a90e2',
+        paddingVertical: 14,
+        paddingHorizontal: 24,
+        borderRadius: 8,
+        width: '80%',
+        alignItems: 'center',
         marginBottom: 20,
     },
-    navButton: {
-        backgroundColor: 'white',
-        paddingVertical: 8,
-        paddingHorizontal: 18,
-        borderRadius: 8,
-        marginBottom: 15
+    buttonText: {
+        color: 'white',
+        fontSize: 16,
+        fontWeight: 'bold',
     },
 });

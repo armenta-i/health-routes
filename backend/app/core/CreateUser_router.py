@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, FastAPI, HTTPException
 from pydantic import BaseModel
 from app.services import supabase_service
 
@@ -15,16 +15,28 @@ class UserCreateRequest(BaseModel):
 async def create_user(user: UserCreateRequest):
     try:
         user_data = {
-            "PhoneN": user.phone_number,
-            "PASSWORD": user.password,
-            "FullName": user.full_name
+            "phonen": user.phone_number,
+            "password": user.password,
+            "fullname": user.full_name
         }
-        response = supabase_service.supabase.table("USERST").insert(user_data).execute()
-
-        if response.error:
-            raise HTTPException(status_code=400, detail=response.error.message)
-
-        return {"message": "User created successfully", "data": response.data}
+        print(f"Attempting to insert: {user_data}")  # Debug print
+        
+        # Execute the insert query
+        response = supabase_service.supabase.table("userst").insert(user_data).execute()
+        
+        # Debug print the full response
+        print(f"Response structure: {type(response)}")
+        print(f"Response data: {response}")
+        
+        # Check if response contains data or error
+        if hasattr(response, 'data'):
+            return {"message": "User created successfully", "data": response.data}
+        else:
+            # Handle case where response format is different
+            return {"message": "User created successfully", "response": str(response)}
     
     except Exception as e:
+        print(f"Exception caught: {str(e)}")
+        import traceback
+        traceback.print_exc()
         raise HTTPException(status_code=500, detail=str(e))

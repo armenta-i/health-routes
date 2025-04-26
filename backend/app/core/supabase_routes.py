@@ -3,6 +3,8 @@
 import os
 from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException
+from pydantic import BaseModel
+from supabase import create_client, Client
 
 load_dotenv(dotenv_path="/app/.env")
 

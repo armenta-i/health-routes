@@ -7,8 +7,6 @@ import {
     StyleSheet,
     TouchableOpacity
 } from 'react-native';
-import { FieldError } from 'react';
-import { NavigationContainer } from "@react-navigation/native";
 
 export default function CreateUser({navigation}) {
     const [name, setName] = useState('')
@@ -17,29 +15,32 @@ export default function CreateUser({navigation}) {
 
     const handleCreateUser = async () => {
         console.log("Button Pressed")
-        navigation.navigate('Login');
-        // try {
-        //     const response = await fetch('', {
-        //         method: 'POST',
-        //         headers: {
-        //             'Content-type' : 'application/json',
-        //         },
-        //         body: JSON.stringify({
-        //             phone_number: phoneNumber,
-        //             password: password,
-        //         }),
-        //     });
 
-        //     const data = await response.json();
+        try {
+            console.log(name, phoneNumber, password)
+            const response = await fetch('http://127.0.0.1:8000/users', {
+                method: 'POST',
+                headers: {
+                    'Content-type' : 'application/json',
+                },
+                body: JSON.stringify({
+                    full_name: name, 
+                    phone_number: phoneNumber,
+                    password: password,
+                }),
+            });
 
-        //     if (response.ok) {
-        //         console.log("Successful: ", data)
-        //     } else {
-        //         console.log("Error fetching data", data.detail);
-        //     }
-        // } catch (error) {
-        //     console.error('Error during login:', error);
-        // }
+            const data = await response.json();
+
+            if (response.ok) {
+                console.log("Successful: ", data);
+                navigation.getParent().replace('Main');
+            } else {
+                console.log("Error fetching data: ", data.detail);
+            }
+        } catch (error) {
+            console.error('Error during login:', error);
+        }
     }
     
     return (
@@ -65,7 +66,7 @@ export default function CreateUser({navigation}) {
             />
 
             <TouchableOpacity
-                onPress={() => navigation.navigate('LandingPage')}
+                onPress={handleCreateUser}
             >
                 <Text style={styles.navButton}>Create Account</Text>
             </TouchableOpacity>
