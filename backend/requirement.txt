@@ -6,3 +6,4 @@ openai
 python-dotenv
 littlehorse-client
 aiofiles
+pytest
