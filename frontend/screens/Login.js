@@ -10,8 +10,11 @@ import {
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import AppNavigator from "../navigation/AppNavigator";
 import { CommonActions } from "@react-navigation/native";
+import { AuthContext } from '../navigation/AppNavigator'; // Adjust path if needed
+import { useContext } from 'react';
 
 export default function Login({navigation}) {
+    const { setUserToken } = useContext(AuthContext);
     const [phoneNumber, setPhoneNumber] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
@@ -36,11 +39,9 @@ export default function Login({navigation}) {
 
             if (response.ok) {
                 console.log("Login Successful:", data);
-                Alert.alert("Success", "Login successful!");
-                
                 await AsyncStorage.setItem('isLoggedIn', 'true');
-            
-                window.location.reload();
+                setUserToken(true); 
+
                 console.log("Login was succesful");
             } else {
                 console.log("Login Error:", data.detail);

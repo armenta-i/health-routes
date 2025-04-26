@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, createContext } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -8,12 +8,15 @@ import CreateUser from '../screens/CreateUser';
 import Login from '../screens/Login';
 import OnboardingScreen from '../screens/OnboardingScreen';
 
-// Create separate stacks for authentication and main app
+// 👇 Create Context
+export const AuthContext = createContext();
+
+// 👇 Create Stack Navigators
 const AuthStack = createNativeStackNavigator();
 const MainStack = createNativeStackNavigator();
 const RootStack = createNativeStackNavigator();
 
-// Auth navigator for login/registration screens
+// 👇 FIRST: Define Navigators BEFORE AppNavigator
 function AuthNavigator() {
   return (
     <AuthStack.Navigator screenOptions={{ headerShown: false }}>
@@ -24,7 +27,6 @@ function AuthNavigator() {
   );
 }
 
-// Main app navigator for authenticated screens
 function MainNavigator() {
   return (
     <MainStack.Navigator screenOptions={{ headerShown: false }} initialRouteName="LandingPage">
@@ -34,13 +36,11 @@ function MainNavigator() {
   );
 }
 
-// Root navigator that handles switching between auth and main flows
 export default function AppNavigator() {
   const [isLoading, setIsLoading] = useState(true);
   const [userToken, setUserToken] = useState(null);
 
   useEffect(() => {
-    // Check for existing login session
     const bootstrapAsync = async () => {
       try {
         const isLoggedIn = await AsyncStorage.getItem('isLoggedIn');
@@ -56,29 +56,20 @@ export default function AppNavigator() {
   }, []);
 
   if (isLoading) {
-    // You could return a loading screen here
     return null;
   }
 
   return (
-    <NavigationContainer>
-      <RootStack.Navigator screenOptions={{ headerShown: false }}>
-        {userToken ? (
-          // User is logged in
-          <RootStack.Screen 
-            name="Main" 
-            component={MainNavigator} 
-            options={{ gestureEnabled: false }} 
-          />
-        ) : (
-          // User is not logged in
-          <RootStack.Screen 
-            name="Auth" 
-            component={AuthNavigator} 
-            options={{ gestureEnabled: false }} 
-          />
-        )}
-      </RootStack.Navigator>
-    </NavigationContainer>
+    <AuthContext.Provider value={{ userToken, setUserToken }}>
+      <NavigationContainer>
+        <RootStack.Navigator screenOptions={{ headerShown: false }}>
+          {userToken ? (
+            <RootStack.Screen name="Main" component={MainNavigator} />
+          ) : (
+            <RootStack.Screen name="Auth" component={AuthNavigator} />
+          )}
+        </RootStack.Navigator>
+      </NavigationContainer>
+    </AuthContext.Provider>
   );
 }

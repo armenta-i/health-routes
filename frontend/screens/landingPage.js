@@ -3,26 +3,15 @@ import { SafeAreaView } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Logout } from './Logout';
 import AppNavigator from '../navigation/AppNavigator';
+import { AuthContext } from '../navigation/AppNavigator'; // Adjust path if needed
+import { useContext } from 'react';
+
+
 
 const screenWidth = Dimensions.get('window').width;
 
 export default function LandingPage({navigation}) {
-  const handleLogout = async () => {
-    // try {
-    //   await AsyncStorage.removeItem('isLoggedIn');
-    //   await AsyncStorage.removeItem('userData');
-    //   await AsyncStorage.removeItem('authToken');
-      
-    //   // Navigate to Auth stack which contains the OnboardingScreen
-    //   navigation.getParent().navigate('Auth');
-      
-    //   console.log('User signed out successfully');
-    // } catch (error) {
-    //   console.error('Error signing out:', error);
-    Logout(navigation, null);
-    // }
-  };
-
+  const { setUserToken } = useContext(AuthContext);
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
@@ -42,7 +31,7 @@ export default function LandingPage({navigation}) {
           {/* Logout Button */}
           <TouchableOpacity
               style={[styles.navButton, { marginLeft: 10 }]} 
-              onPress={handleLogout}
+              onPress={() => Logout(setUserToken)}
             >
               <Text style={styles.navButtonText}>Logout</Text> 
             </TouchableOpacity>
