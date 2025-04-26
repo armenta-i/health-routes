@@ -21,6 +21,6 @@ EXPOSE 19000
 EXPOSE 19001
 
 # For debugging purposes, let's check if the package is actually installed
-RUN ls -la node_modules/react-native-safe-area-context
+# RUN ls -la node_modules/react-native-safe-area-context
 
-CMD ["npx", "expo", "start"]
+CMD ["npm", "run", "web"]

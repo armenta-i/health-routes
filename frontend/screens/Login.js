@@ -17,28 +17,28 @@ export default function Login({navigation}) {
     const handleLogin = async () => {
         console.log("Button Pressed")
         navigation.navigate('LandingPage');
-        // try {
-        //     const response = await fetch('', {
-        //         method: 'POST',
-        //         headers: {
-        //             'Content-type' : 'application/json',
-        //         },
-        //         body: JSON.stringify({
-        //             phone_number: phoneNumber,
-        //             password: password,
-        //         }),
-        //     });
+        try {
+            const response = await fetch('http://localhost:8000/login', {
+                method: 'POST',
+                headers: {
+                    'Content-type' : 'application/json',
+                },
+                body: JSON.stringify({
+                    phone_number: phoneNumber,
+                    password: password,
+                }),
+            });
 
-        //     const data = await response.json();
+            const data = await response.json();
 
-        //     if (response.ok) {
-        //         console.log("Successful: ", data)
-        //     } else {
-        //         console.log("Error fetching data", data.detail);
-        //     }
-        // } catch (error) {
-        //     console.error('Error during login:', error);
-        // }
+            if (response.ok) {
+                console.log("Successful: ", data)
+            } else {
+                console.log("Error fetching data", data.detail);
+            }
+        } catch (error) {
+            console.error('Error during login:', error);
+        }
     }
     
     return (

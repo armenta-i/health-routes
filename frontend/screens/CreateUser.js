@@ -65,10 +65,17 @@ export default function CreateUser({navigation}) {
             />
 
             <TouchableOpacity
-                onPress={() => navigation.navigate('Login')}
+                onPress={() => navigation.navigate('LandingPage')}
             >
                 <Text style={styles.navButton}>Create Account</Text>
             </TouchableOpacity>
+
+            <TouchableOpacity
+                onPress={() => navigation.navigate('Login')}
+            >
+                <Text style={styles.navButton}>Login</Text>
+            </TouchableOpacity>
+            
         </View>
     );
 }
@@ -100,5 +107,6 @@ const styles = StyleSheet.create({
         paddingVertical: 8,
         paddingHorizontal: 18,
         borderRadius: 8,
+        marginBottom: 15
     },
 });
