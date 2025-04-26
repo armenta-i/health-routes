@@ -6,7 +6,7 @@ COPY package*.json ./
 
 RUN npm install
 
-RUN npm install -g expo-cli
+RUN npm install -g expo@52.0.46
 
 COPY . .
 
