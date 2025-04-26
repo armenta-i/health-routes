@@ -10,6 +10,7 @@ COPY . .
 # Install Python dependencies
 RUN pip install --no-cache-dir -r requirement.txt
 
+
 # Expose the port FastAPI runs on
 EXPOSE 8000
 

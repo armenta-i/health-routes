@@ -1,13 +1,16 @@
-
-import os
 from dotenv import load_dotenv
-
 load_dotenv()
 
-SUPABASE_URL        = os.getenv("SUPABASE_URL")
-SUPABASE_ANON_KEY   = os.getenv("SUPABASE_ANON_KEY")
-SUPABASE_SERVICE_KEY= os.getenv("SUPABASE_SERVICE_ROLE_KEY")
+import os
 
-if not SUPABASE_URL or not SUPABASE_ANON_KEY:
-    raise RuntimeError("Missing Supabase config in .env")
+from supabase import create_client
+
+url = os.environ.get("SUPABASE_URL")
+key = os.environ.get("SUPABASE_KEY")
+
+supabase = create_client(url, key)
+
+
+data= supabase.table("test").select("*").execute()
+print(data)
 

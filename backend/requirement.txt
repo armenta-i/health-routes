@@ -1,8 +1,10 @@
 fastapi
 uvicorn
-supabase
+python-dotenv
 langchain
 openai
 python-dotenv
 littlehorse-client
 aiofiles
+supabase
+pydantic-settings
