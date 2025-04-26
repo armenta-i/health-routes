@@ -2,7 +2,7 @@ import { View, Text, TouchableOpacity, ScrollView, StyleSheet, Image, Dimensions
 import { SafeAreaView } from 'react-native';
 const screenWidth = Dimensions.get('window').width;
 
-export default function App() {
+export default function LandingPage({navigation}) {
   return (
     <SafeAreaView style={{ flex: 1 }}>
 
@@ -11,8 +11,10 @@ export default function App() {
       <View style={styles.header}>
         <Text style={styles.logo}>♡ Fidari Health</Text>
         <View style={styles.navButtons}>
-          <Text style={styles.navLink}>Dashboard</Text>
-          <TouchableOpacity style={styles.navButton}>
+          <TouchableOpacity 
+          style={styles.navButton}
+          onPress={() => navigation.navigate('MedicalForm')}
+          >
             <Text style={styles.navButtonText}>Find Care</Text>
           </TouchableOpacity>
         </View>
