@@ -21,4 +21,6 @@ services:
       - /app/node_modules
     env_file:
       - ./frontend/.env
+    tty: true
+    stdin_open: true
 
