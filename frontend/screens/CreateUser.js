@@ -10,7 +10,7 @@ import {
 import { FieldError } from 'react';
 import { NavigationContainer } from "@react-navigation/native";
 
-export default function Login({navigation}) {
+export default function CreateUser({navigation}) {
     const [name, setName] = useState('')
     const [phoneNumber, setPhoneNumber] = useState('');
     const [password, setPassword] = useState('');
@@ -65,7 +65,7 @@ export default function Login({navigation}) {
             />
 
             <TouchableOpacity
-                onPress={() => navigation.navigate('CreateUser')}
+                onPress={() => navigation.navigate('Login')}
             >
                 <Text style={styles.navButton}>Create Account</Text>
             </TouchableOpacity>

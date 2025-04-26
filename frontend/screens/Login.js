@@ -16,7 +16,7 @@ export default function Login({navigation}) {
 
     const handleLogin = async () => {
         console.log("Button Pressed")
-        navigation.navigate('CreateUser');
+        navigation.navigate('LandingPage');
         // try {
         //     const response = await fetch('', {
         //         method: 'POST',
@@ -58,7 +58,7 @@ export default function Login({navigation}) {
             />
 
             <TouchableOpacity
-                onPress={() => navigation.navigate('CreateUser')}
+                onPress={() => navigation.navigate('LandingPage')}
             >
                 <Text style={styles.navButton}>Login</Text>
             </TouchableOpacity>
