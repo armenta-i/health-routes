@@ -38,6 +38,7 @@ export default function Login({navigation}) {
                 navigation.getParent().replace('Main');
             } else {
                 console.log("Login Error:", data.detail);
+                
                 setError(data.detail || "Login failed");
             }
         } catch (error) {

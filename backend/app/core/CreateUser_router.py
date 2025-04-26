@@ -23,7 +23,7 @@ async def create_user(user: UserCreateRequest):
         
         # Execute the insert query
         response = supabase_service.supabase.table("userst").insert(user_data).execute()
-        
+
         # Debug print the full response
         print(f"Response structure: {type(response)}")
         print(f"Response data: {response}")
