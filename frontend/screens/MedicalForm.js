@@ -1,157 +1,93 @@
 import { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView, SafeAreaView } from 'react-native';
+import {
+  View, Text, TextInput,
+  TouchableOpacity, StyleSheet,
+  ScrollView, SafeAreaView,
+  Alert
+} from 'react-native';
+
 export default function MedicalForm() {
   const [selectedTab, setSelectedTab] = useState('basic');
   const [location, setLocation] = useState('');
   const [language, setLanguage] = useState('');
-  const [careType, setCareType] = useState('');
+  const [medicalIssue, setMedicalIssue] = useState('');
+
+  const handleSubmit = async () => {
+    
+    const payload = {
+      location: location,
+      language: language,
+      medicalIssue: medicalIssue,   
+    };
+
+    try {
+      const response = await fetch('http://127.0.0.1:8000/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+
+      const json = await res.json();
+
+      if (res.ok) {
+        Alert.alert('Success', 'Form submitted!');
+        console.log('Backend response:', json);
+      } else {
+        Alert.alert('Error', json.detail || 'Submission failed');
+      }
+    } catch (err) {
+      console.error(err);
+      Alert.alert('Network error', 'Please try again');
+    }
+  };
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
-        <ScrollView contentContainerStyle={styles.container}>
-        {/* Form Title */}
-        <Text style={styles.title}>Your Healthcare Needs</Text>
-        <Text style={styles.subtitle}>
-            Fill out this form to help us find the best healthcare options for you.
-        </Text>
-
-        {/* Tabs */}
-        <View style={styles.tabContainer}>
-            <TouchableOpacity
-            style={[
-                styles.tabButton,
-                selectedTab === 'basic' && styles.tabButtonActive,
-            ]}
-            onPress={() => setSelectedTab('basic')}
-            >
-            <Text style={selectedTab === 'basic' ? styles.tabTextActive : styles.tabText}>Basic Information</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-            style={[
-                styles.tabButton,
-                selectedTab === 'additional' && styles.tabButtonActive,
-            ]}
-            onPress={() => setSelectedTab('additional')}
-            >
-            <Text style={selectedTab === 'additional' ? styles.tabTextActive : styles.tabText}>Additional Details</Text>
-            </TouchableOpacity>
-        </View>
-
-        {/* Form Fields (only show basic for now) */}
+      <ScrollView contentContainerStyle={styles.container}>
+        {/*tabs*/}
         {selectedTab === 'basic' && (
-            <View style={styles.formSection}>
+          <View style={styles.formSection}>
             {/* Location */}
             <Text style={styles.label}>Location</Text>
             <TextInput
-                style={styles.input}
-                placeholder="Enter your city, zip code, or address"
-                value={location}
-                onChangeText={setLocation}
+              style={styles.input}
+              placeholder="Enter your city, zip code, or address"
+              value={location}
+              onChangeText={setLocation}
             />
-            <Text style={styles.helperText}>
-                We'll use this to find healthcare options near you.
-            </Text>
-
-            {/* Preferred Language */}
+            {/* Language */}
             <Text style={styles.label}>Preferred Language</Text>
             <TextInput
-                style={styles.input}
-                placeholder="Select your preferred language"
-                value={language}
-                onChangeText={setLanguage}
+              style={styles.input}
+              placeholder="Select your preferred language"
+              value={language}
+              onChangeText={setLanguage}
             />
-            <Text style={styles.helperText}>
-                We'll try to match you with providers who speak your language.
-            </Text>
-
-            {/* Type of Care Needed */}
+            {/*medicalIssues*/}
             <Text style={styles.label}>Type of Care Needed</Text>
             <TextInput
-                style={styles.input}
-                placeholder="Select the type of care you need"
-                value={careType}
-                onChangeText={setCareType}
+              style={styles.input}
+              placeholder="How can we help you today"
+              value={medicalIssue}
+              onChangeText={medicalIssue}
             />
-            <Text style={styles.helperText}>
-                This helps us find the right type of healthcare provider for you.
-            </Text>
-            </View>
+          </View>
         )}
 
-        {/* Find Care Button */}
-        <TouchableOpacity style={styles.submitButton}>
-            <Text style={styles.submitButtonText}>Find Care Options</Text>
+        {/* Submit button */}
+        <TouchableOpacity
+          style={styles.submitButton}
+          onPress={handleSubmit}
+        >
+          <Text style={styles.submitButtonText}>Find Care Options</Text>
         </TouchableOpacity>
-        </ScrollView>
+      </ScrollView>
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    padding: 24,
-    backgroundColor: '#fff',
-    flexGrow: 1,
-  },
-  title: {
-    fontSize: 26,
-    fontWeight: 'bold',
-    marginBottom: 8,
-  },
-  subtitle: {
-    fontSize: 16,
-    color: '#666',
-    marginBottom: 24,
-  },
-  tabContainer: {
-    flexDirection: 'row',
-    marginBottom: 24,
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 8,
-    overflow: 'hidden',
-  },
-  tabButton: {
-    flex: 1,
-    paddingVertical: 12,
-    backgroundColor: '#f5f5f5',
-    alignItems: 'center',
-  },
-  tabButtonActive: {
-    backgroundColor: '#fff',
-  },
-  tabText: {
-    fontSize: 14,
-    color: '#666',
-  },
-  tabTextActive: {
-    fontSize: 14,
-    color: 'black',
-    fontWeight: 'bold',
-  },
-  formSection: {
-    marginBottom: 32,
-  },
-  label: {
-    fontSize: 16,
-    fontWeight: '600',
-    marginBottom: 6,
-  },
-  input: {
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 8,
-    paddingHorizontal: 12,
-    paddingVertical: 10,
-    marginBottom: 8,
-    fontSize: 16,
-  },
-  helperText: {
-    fontSize: 12,
-    color: '#999',
-    marginBottom: 16,
-  },
+  /* …style */
   submitButton: {
     backgroundColor: 'black',
     paddingVertical: 14,
