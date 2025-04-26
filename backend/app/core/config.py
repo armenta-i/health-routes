@@ -1,16 +1,12 @@
-from dotenv import load_dotenv
-load_dotenv()
+# backend/app/core/config.py
 
 import os
+from dotenv import load_dotenv
 
-from supabase import create_client
+load_dotenv(dotenv_path="/app/.env")
 
-url = os.environ.get("SUPABASE_URL")
-key = os.environ.get("SUPABASE_KEY")
+SUPABASE_URL = os.getenv("SUPABASE_URL")
+SUPABASE_KEY = os.getenv("SUPABASE_KEY")
 
-supabase = create_client(url, key)
-
-
-data= supabase.table("test").select("*").execute()
-print(data)
-
+if not SUPABASE_URL or not SUPABASE_KEY:
+    raise ValueError("Missing SUPABASE_URL or SUPABASE_KEY in environment!")
