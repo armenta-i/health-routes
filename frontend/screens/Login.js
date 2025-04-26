@@ -1,18 +1,17 @@
 import React, {useState} from "react";
-import { 
-    View, 
-    Text, 
-    TextInput,
-    Button,
-    StyleSheet,
-    TouchableOpacity
-} from 'react-native';
+import {View,Text,TextInput,Button,StyleSheet,TouchableOpacity} from 'react-native';
 import { FieldError } from 'react';
 import { NavigationContainer } from "@react-navigation/native";
 
-export default function Login({navigation}) {
+export default async function Login({navigation}) {
     const [phoneNumber, setPhoneNumber] = useState('');
     const [password, setPassword] = useState('');
+
+    const url = `http://localhost:8000/api/places/nearby?latitude=37.7749&longitude=-122.4194&radius=1000`;
+
+    const res = await fetch(url);
+    const data = await res.json();
+    console.log(data.results);
 
     const handleLogin = async () => {
         console.log("Button Pressed")
