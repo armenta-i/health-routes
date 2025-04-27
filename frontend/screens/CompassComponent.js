@@ -1,13 +1,21 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Animated, Platform, Image } from 'react-native';
+import { View, Image, Animated, StyleSheet, Platform, Text } from 'react-native';
 import { Magnetometer } from 'expo-sensors';
-import CompassImage from '../assets/compass.png'; // local import
 
 const CompassComponent = () => {
   const [angle, setAngle] = useState(0);
   const rotateAnim = useState(new Animated.Value(0))[0];
 
+  const compassSource = Platform.OS === 'web'
+    ? { uri: '/compass.png' }
+    : require('../assets/compass.png'); // Adjust path if needed
+
   useEffect(() => {
+    if (Platform.OS === 'web') {
+      // Don't use magnetometer on web
+      return;
+    }
+
     const subscription = Magnetometer.addListener(data => {
       const { x, y } = data;
       let heading = Math.atan2(y, x) * (180 / Math.PI);
@@ -24,40 +32,36 @@ const CompassComponent = () => {
     return () => subscription && subscription.remove();
   }, []);
 
-  const rotation = rotateAnim.interpolate({
+  const rotate = rotateAnim.interpolate({
     inputRange: [0, 360],
     outputRange: ['0deg', '360deg'],
   });
-
-  // Choose source based on platform
-  const compassSource = Platform.OS === 'web'
-    ? { uri: '/assets/compass.png' }  // For web bundling
-    : CompassImage;                   // For native apps
 
   return (
     <View style={styles.container}>
       <Animated.Image
         source={compassSource}
-        style={[styles.compassImage, { transform: [{ rotate: rotation }] }]}
+        style={[styles.compass, { transform: [{ rotate }] }]}
+        resizeMode="contain"
       />
-      <Text style={styles.headingText}>{Math.round(angle)}°</Text>
+      <Text style={styles.angleText}>{Math.round(angle)}°</Text>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    marginTop: 20,
     alignItems: 'center',
+    marginTop: 20,
   },
-  compassImage: {
+  compass: {
     width: 200,
     height: 200,
   },
-  headingText: {
-    fontSize: 18,
-    marginTop: 12,
+  angleText: {
+    fontSize: 24,
     fontWeight: 'bold',
+    marginTop: 10,
   },
 });
 

@@ -19,30 +19,30 @@ const DirectionItem = ({ number, instruction, distance, duration }) => {
 };
 
 const styles = StyleSheet.create({
-  itemContainer: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    backgroundColor: '#ffffff',
-    padding: 12,
-    borderRadius: 8,
-    marginBottom: 12,
-    elevation: 2, // Shadow for Android
-    shadowColor: '#000', // Shadow for iOS
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    shadowOffset: { width: 0, height: 2 },
-  },
+    itemContainer: {
+        flexDirection: 'row',
+        alignItems: 'flex-start',
+        backgroundColor: '#ffffff',
+        padding: 12,
+        borderRadius: 8,
+        marginBottom: 12,
+        // Mobile shadow
+        elevation: 2,
+        // Web shadow
+        boxShadow: '0px 2px 4px gray',
+      }
+      ,
   stepCircle: {
     width: 32,
     height: 32,
     borderRadius: 16,
-    backgroundColor: '#0288d1',
+    backgroundColor: 'black', // Black circle
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 12,
   },
   stepNumber: {
-    color: '#fff',
+    color: 'white',
     fontWeight: 'bold',
   },
   instructionContainer: {
@@ -52,10 +52,11 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginBottom: 4,
     fontWeight: '500',
+    color: 'black',
   },
   subText: {
     fontSize: 14,
-    color: '#666',
+    color: 'gray',
   },
 });
 
