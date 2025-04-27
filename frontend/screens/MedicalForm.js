@@ -18,7 +18,7 @@ export default function MedicalForm({ navigation }) {
   const [location, setLocation] = useState('');
   const [language, setLanguage] = useState('');
   const [medicalIssue, setMedicalIssue] = useState('');
-  const [howAreYou, setHowAreYou] = useState(''); // <-- Added missing state if needed
+  const [howAreYou, setHowAreYou] = useState('');
 
   const handleSubmit = async () => {
     try {
@@ -36,6 +36,17 @@ export default function MedicalForm({ navigation }) {
 
   return (
     <SafeAreaView style={styles.safeArea}>
+      {/* Top Header */}
+      <View style={styles.headerContainer}>
+        <View style={styles.headerSpacer} />
+        <TouchableOpacity
+          style={styles.homeButton}
+          onPress={() => navigation.navigate('LandingPage')} // <-- Update 'LandingPage' to your landing page route
+        >
+          <Text style={styles.homeButtonText}>Home</Text>
+        </TouchableOpacity>
+      </View>
+
       <ScrollView contentContainerStyle={styles.container}>
         <Text style={styles.title}>Your Healthcare Needs</Text>
         <Text style={styles.subtitle}>
@@ -95,6 +106,26 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff'
   },
+  headerContainer: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    paddingTop: 10,
+  },
+  headerSpacer: {
+    flex: 1,
+  },
+  homeButton: {
+    backgroundColor: '#000',
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    borderRadius: 20,
+  },
+  homeButtonText: {
+    color: '#fff',
+    fontWeight: 'bold',
+  },
   container: {
     padding: 24,
     paddingBottom: 40
@@ -108,32 +139,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#666',
     marginBottom: 24
-  },
-  tabContainer: {
-    flexDirection: 'row',
-    marginBottom: 24,
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 8,
-    overflow: 'hidden'
-  },
-  tabButton: {
-    flex: 1,
-    paddingVertical: 12,
-    backgroundColor: '#f5f5f5',
-    alignItems: 'center'
-  },
-  tabButtonActive: {
-    backgroundColor: '#fff'
-  },
-  tabText: {
-    fontSize: 14,
-    color: '#666'
-  },
-  tabTextActive: {
-    fontSize: 14,
-    color: 'black',
-    fontWeight: 'bold'
   },
   formSection: {
     marginBottom: 50

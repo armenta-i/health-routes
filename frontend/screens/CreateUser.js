@@ -8,15 +8,17 @@ import {
 } from 'react-native';
 
 export default function CreateUser({navigation}) {
-    const [name, setName] = useState('')
+    const [name, setName] = useState('');
     const [phoneNumber, setPhoneNumber] = useState('');
     const [password, setPassword] = useState('');
 
+    const [linkPressed, setLinkPressed] = useState(false);
+
     const handleCreateUser = async () => {
-        console.log("Button Pressed")
+        console.log("Button Pressed");
 
         try {
-            console.log(name, phoneNumber, password)
+            console.log(name, phoneNumber, password);
             const response = await fetch('http://127.0.0.1:8000/users', {
                 method: 'POST',
                 headers: {
@@ -45,6 +47,7 @@ export default function CreateUser({navigation}) {
     return (
         <View style={styles.container}>
             <Text style={styles.header}>Create Account</Text>
+            
             <TextInput
                 style={styles.input}
                 placeholder="Enter your name"
@@ -62,18 +65,24 @@ export default function CreateUser({navigation}) {
                 placeholder="Enter your password"
                 onChangeText={newPassword => setPassword(newPassword)}
                 defaultValue={password}
+                secureTextEntry={true}
             />
 
             <TouchableOpacity
                 onPress={handleCreateUser}
+                style={styles.button}
             >
-                <Text style={styles.navButton}>Create Account</Text>
+                <Text style={styles.buttonText}>Create Account</Text>
             </TouchableOpacity>
 
             <TouchableOpacity
+                onPressIn={() => setLinkPressed(true)}
+                onPressOut={() => setLinkPressed(false)}
                 onPress={() => navigation.navigate('Login')}
             >
-                <Text style={styles.navButton}>Login</Text>
+                <Text style={[styles.navLink, linkPressed && styles.navLinkHover]}>
+                    Already have an account? Login
+                </Text>
             </TouchableOpacity>
             
         </View>
@@ -95,6 +104,7 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         marginBottom: 12,
         paddingHorizontal: 10,
+        borderRadius: 5,
     },
     header: {
         textAlign: 'center',
@@ -102,11 +112,26 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         marginBottom: 20,
     },
-    navButton: {
-        backgroundColor: 'white',
-        paddingVertical: 8,
-        paddingHorizontal: 18,
-        borderRadius: 8,
-        marginBottom: 15
+    button: {
+        backgroundColor: '#000000',
+        paddingVertical: 12,
+        paddingHorizontal: 24,
+        borderRadius: 5,
+        width: '100%',
+        alignItems: 'center',
+        marginBottom: 20,
+    },
+    buttonText: {
+        color: 'white',
+        fontWeight: 'bold',
+        fontSize: 16,
+    },
+    navLink: {
+        color: 'grey',
+        marginTop: 10,
+        fontSize: 16,
+    },
+    navLinkHover: {
+        color: 'black',
     },
 });

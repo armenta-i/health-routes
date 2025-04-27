@@ -10,7 +10,7 @@ import AppNavigator from "../navigation/AppNavigator";
 export default function OnboardingScreen({ navigation }) {
     return (
         <View style={styles.container}>
-            <Text style={styles.header}>Welcome to Fidari Health</Text>
+            <Text style={styles.header}>Welcome to Health Routes</Text>
 
             {/* Login Button */}
             <TouchableOpacity
@@ -44,10 +44,10 @@ const styles = StyleSheet.create({
         fontSize: 28,
         fontWeight: 'bold',
         marginBottom: 40,
-        color: '#333',
+        color: '#000000',
     },
     button: {
-        backgroundColor: '#4a90e2',
+        backgroundColor: '#000000',
         paddingVertical: 14,
         paddingHorizontal: 24,
         borderRadius: 8,

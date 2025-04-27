@@ -1,28 +1,23 @@
-import React, {useState} from "react";
+import React, { useState, useContext } from "react";
 import { 
     View, 
     Text, 
-    TextInput,
-    StyleSheet,
-    TouchableOpacity,
-    Alert
+    TextInput, 
+    StyleSheet, 
+    TouchableOpacity 
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import AppNavigator from "../navigation/AppNavigator";
-import { CommonActions } from "@react-navigation/native";
-import { AuthContext } from '../navigation/AppNavigator'; // Adjust path if needed
-import { useContext } from 'react';
+import { AuthContext } from '../navigation/AppNavigator'; // Adjust if needed
 
-export default function Login({navigation}) {
+export default function Login({ navigation }) {
     const { setUserToken } = useContext(AuthContext);
     const [phoneNumber, setPhoneNumber] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
+    const [linkPressed, setLinkPressed] = useState(false); // <-- Added here
 
     const handleLogin = async () => {
         console.log("Login Button Pressed");
-        // setError(''); // Clear previous errors
-        
         try {
             const response = await fetch('http://127.0.0.1:8000/login', {
                 method: 'POST',
@@ -40,26 +35,24 @@ export default function Login({navigation}) {
             if (response.ok) {
                 console.log("Login Successful:", data);
                 await AsyncStorage.setItem('isLoggedIn', 'true');
-                setUserToken(true); 
-
-                console.log("Login was succesful");
+                setUserToken(true);
+                console.log("Login was successful");
             } else {
                 console.log("Login Error:", data.detail);
-                
                 setError(data.detail || "Login failed");
             }
         } catch (error) {
             console.error('Error during login:', error);
             setError("Network error, please try again later");
         }
-    }
-    
+    };
+
     return (
         <View style={styles.container}>
             <Text style={styles.header}>Login</Text>
-            
+
             {error ? <Text style={styles.errorText}>{error}</Text> : null}
-            
+
             <TextInput
                 style={styles.input}
                 placeholder="Enter your phone number"
@@ -82,9 +75,13 @@ export default function Login({navigation}) {
             </TouchableOpacity>
 
             <TouchableOpacity
+                onPressIn={() => setLinkPressed(true)}
+                onPressOut={() => setLinkPressed(false)}
                 onPress={() => navigation.navigate('CreateUser')}
             >
-                <Text style={styles.navLink}>Don't have an account? Sign up</Text>
+                <Text style={[styles.navLink, linkPressed && styles.navLinkHover]}>
+                    Don't have an account? Sign up
+                </Text>
             </TouchableOpacity>
         </View>
     );
@@ -114,7 +111,7 @@ const styles = StyleSheet.create({
         marginBottom: 20,
     },
     button: {
-        backgroundColor: '#4a90e2',
+        backgroundColor: '#000000',
         paddingVertical: 12,
         paddingHorizontal: 24,
         borderRadius: 5,
@@ -128,8 +125,12 @@ const styles = StyleSheet.create({
         fontSize: 16,
     },
     navLink: {
-        color: '#4a90e2',
+        color: 'grey',
         marginTop: 10,
+        fontSize: 16,
+    },
+    navLinkHover: {
+        color: 'black',
     },
     errorText: {
         color: 'red',

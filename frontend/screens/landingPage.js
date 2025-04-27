@@ -50,12 +50,10 @@ export default function LandingPage({navigation}) {
           </Text>
 
           <View style={styles.heroButtons}>
-            <TouchableOpacity style={styles.primaryButton}>
+            <TouchableOpacity style={styles.primaryButton}
+              onPress={() => navigation.navigate('MedicalForm')}>
               <Text style={styles.primaryButtonText}>Find Care Now →</Text>
             </TouchableOpacity>
-            {/* <TouchableOpacity style={styles.secondaryButton} onPress={navigation.navigate('Login')}> // REMOVE onPress
-              <Text style={styles.secondaryButtonText}>Learn More</Text>
-            </TouchableOpacity> */}
           </View>
         </View>
 
