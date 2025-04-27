@@ -1,0 +1,162 @@
+[
+  {
+    "name": "The Hospitals of Providence Sierra Campus",
+    "phone_number": "(915) 747-4000",
+    "international_phone_number": "+1 915-747-4000",
+    "address": "1625 Medical Center St Drive, El Paso, TX 79902, USA",
+    "latitude": 31.777699,
+    "longitude": -106.4808984
+  },
+  {
+    "name": "Kindred Hospital El Paso",
+    "phone_number": "(915) 351-9044",
+    "international_phone_number": "+1 915-351-9044",
+    "address": "1740 Curie Dr, El Paso, TX 79902, USA",
+    "latitude": 31.7787246,
+    "longitude": -106.4772073
+  },
+  {
+    "name": "Pediatrix Medical Group",
+    "phone_number": "(915) 533-8658",
+    "international_phone_number": "+1 915-533-8658",
+    "address": "125 W Hague Rd, El Paso, TX 79902, USA",
+    "latitude": 31.7700042,
+    "longitude": -106.500032
+  },
+  {
+    "name": "The Hospitals of Providence Memorial Campus",
+    "phone_number": "(915) 577-6011",
+    "international_phone_number": "+1 915-577-6011",
+    "address": "2001 N Oregon St, El Paso, TX 79902, USA",
+    "latitude": 31.7699593,
+    "longitude": -106.5007533
+  },
+  {
+    "name": "Mexican Institute of Social Security Clinic 62",
+    "phone_number": "656 612 5248",
+    "international_phone_number": "+52 656 612 5248",
+    "address": "C. Soto y Gama 4408, Francisco I. Madero, 32170 Juárez, Chih., Mexico",
+    "latitude": 31.7366716,
+    "longitude": -106.5096848
+  },
+  {
+    "name": "Las Palmas Medical Center",
+    "phone_number": "(915) 521-1200",
+    "international_phone_number": "+1 915-521-1200",
+    "address": "1801 N Oregon St, El Paso, TX 79902, USA",
+    "latitude": 31.7699653,
+    "longitude": -106.4987868
+  },
+  {
+    "name": "Texas Tech Pediatrics",
+    "phone_number": "(915) 215-5700",
+    "international_phone_number": "+1 915-215-5700",
+    "address": "4801 Alberta Ave, El Paso, TX 79905, USA",
+    "latitude": 31.773094,
+    "longitude": -106.4346716
+  },
+  {
+    "name": "Sierra Providence MRI",
+    "phone_number": "(915) 577-1628",
+    "international_phone_number": "+1 915-577-1628",
+    "address": "1900 N Oregon St # 101, El Paso, TX 79902, USA",
+    "latitude": 31.7712292,
+    "longitude": -106.4990052
+  },
+  {
+    "name": "The Hospitals of Providence Children's Hospital",
+    "phone_number": "(833) 225-8751",
+    "international_phone_number": "+1 833-225-8751",
+    "address": "2001 N Oregon St, El Paso, TX 79902, USA",
+    "latitude": 31.7710272,
+    "longitude": -106.5001332
+  },
+  {
+    "name": "Hospital del Sol",
+    "phone_number": "656 611 7073",
+    "international_phone_number": "+52 656 611 7073",
+    "address": "Cd. Juarez, Hidalgo, 32300 México, Chih., Mexico",
+    "latitude": 31.74963049999999,
+    "longitude": -106.4581346
+  },
+  {
+    "name": "DaVita Sun City Dialysis Center",
+    "phone_number": "(833) 344-2535",
+    "international_phone_number": "+1 833-344-2535",
+    "address": "600 Newman St, El Paso, TX 79902, USA",
+    "latitude": 31.7696069,
+    "longitude": -106.477912
+  },
+  {
+    "name": "GINECER",
+    "phone_number": "656 613 1926",
+    "international_phone_number": "+52 656 613 1926",
+    "address": "Av. Adolfo López Mateos 805, Los Nogales, 32350 Juárez, Chih., Mexico",
+    "latitude": 31.7297826,
+    "longitude": -106.4503888
+  },
+  {
+    "name": "Medical Care Referral Group",
+    "phone_number": "(915) 532-2408",
+    "international_phone_number": "+1 915-532-2408",
+    "address": "4855 N Mesa St UNIT 130, El Paso, TX 79912, USA",
+    "latitude": 31.80787789999999,
+    "longitude": -106.5106269
+  },
+  {
+    "name": "Salud y Bienestar Comunitario, A.C.",
+    "phone_number": "656 172 2780",
+    "international_phone_number": "+52 656 172 2780",
+    "address": "Calle Amanalco y Tlalpan 3411, Col. Adolfo López Mateos, 32220 Juárez, Chih., Mexico",
+    "latitude": 31.7139331,
+    "longitude": -106.5101206
+  },
+  {
+    "name": "Young Slim",
+    "phone_number": "81 8347 8716",
+    "international_phone_number": "+52 81 8347 8716",
+    "address": "1A 413, Cumbres Primer Sector, 64610 Monterrey, Nuevo León, Mexico",
+    "latitude": 31.7227436,
+    "longitude": -106.4858816
+  },
+  {
+    "name": "Doctores Para Ti",
+    "phone_number": "(915) 209-2059",
+    "international_phone_number": "+1 915-209-2059",
+    "address": "500 W Overland Ave #250ll, El Paso, TX 79901, USA",
+    "latitude": 31.7553378,
+    "longitude": -106.4931378
+  },
+  {
+    "name": "el paso heart center",
+    "phone_number": "(915) 532-4542",
+    "international_phone_number": "+1 915-532-4542",
+    "address": "1700 Curie Dr # 1500, El Paso, TX 79902, USA",
+    "latitude": 31.7784199,
+    "longitude": -106.4788805
+  },
+  {
+    "name": "Surgical Center of El Paso",
+    "phone_number": "(915) 533-8412",
+    "international_phone_number": "+1 915-533-8412",
+    "address": "4171 N Mesa St, El Paso, TX 79902, USA",
+    "latitude": 31.793964,
+    "longitude": -106.510959
+  },
+  {
+    "name": "MTF",
+    "phone_number": "(915) 533-3074",
+    "international_phone_number": "+1 915-533-3074",
+    "address": "4505 Alberta Ave, El Paso, TX 79905, USA",
+    "latitude": 31.7733154,
+    "longitude": -106.4376283
+  },
+  {
+    "name": "Clinica de Alergia de Ciudad Juarez",
+    "phone_number": "656 614 7492",
+    "international_phone_number": "+52 656 614 7492",
+    "address": "C. Ignacio Mejía 1913-Consultorio 2, Partido Romero, 32030 Juárez, Chih., Mexico",
+    "latitude": 31.7407346,
+    "longitude": -106.4670138
+  }
+]

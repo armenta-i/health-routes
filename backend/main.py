@@ -1,17 +1,26 @@
-from fastapi import FastAPI
-from app.api import auth, ai, workflow
+from app.core import google_routes
+from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
+from dotenv import load_dotenv
+from pydantic import BaseModel
+import requests
+import hashlib
+import os
+import random
+import string
 from fastapi.middleware.cors import CORSMiddleware
 from app.core.CreateUser_router import router as user_router
 from app.core.LoginUser_router import router as login_router
 from pydantic import BaseModel
 
+load_dotenv()
 app = FastAPI()
 app.include_router(user_router)
 app.include_router(login_router)
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Adjust for production
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -52,3 +61,4 @@ async def medical_post(form: MedicalFormRequest):
         import traceback
         traceback.print_exc()
         raise HTTPException(status_code=500, detail=str(e))
+app.include_router(google_routes.router)

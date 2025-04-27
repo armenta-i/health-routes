@@ -19,7 +19,7 @@ export default function LandingPage({navigation}) {
     <ScrollView style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
-        <Text style={styles.logo}>♡ Fidari Health</Text>
+        <Text style={styles.logo}>♡ Health-Routes</Text>
         <View style={styles.navButtons}>
           <TouchableOpacity 
           style={styles.navButton}
@@ -45,7 +45,7 @@ export default function LandingPage({navigation}) {
             Connecting You to the Best Healthcare Options
           </Text>
           <Text style={styles.heroSubtext}>
-            Fidari helps patients in rural, tribal, and border communities find
+            Health-Routes helps patients in rural, tribal, and border communities find
             healthcare that fits their needs, language, and location.
           </Text>
 
@@ -67,7 +67,7 @@ export default function LandingPage({navigation}) {
 
       {/* How Fidari Works */}
       <View style={styles.howItWorksSection}>
-        <Text style={styles.howItWorksTitle}>How Fidari Works</Text>
+        <Text style={styles.howItWorksTitle}>How Health-Routes Works</Text>
         <Text style={styles.howItWorksSubtitle}>
           Our platform connects you to healthcare options that match your needs, language, and location.
         </Text>

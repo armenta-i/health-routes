@@ -9,12 +9,9 @@ import {
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { AuthContext } from '../navigation/AppNavigator'; // Adjust if needed
 
-export default function Login({ navigation }) {
-    const { setUserToken } = useContext(AuthContext);
+export default function Login({navigation}) {
     const [phoneNumber, setPhoneNumber] = useState('');
     const [password, setPassword] = useState('');
-    const [error, setError] = useState('');
-    const [linkPressed, setLinkPressed] = useState(false); // <-- Added here
 
     const handleLogin = async () => {
         console.log("Login Button Pressed");
