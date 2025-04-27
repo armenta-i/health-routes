@@ -7,6 +7,7 @@ import MedicalForm from '../screens/MedicalForm';
 import CreateUser from '../screens/CreateUser';
 import Login from '../screens/Login';
 import OnboardingScreen from '../screens/OnboardingScreen';
+import resultsScreen from '../screens/resultsScreen'; // <--- Import it at the top
 
 // 👇 Create Context
 export const AuthContext = createContext();
@@ -32,7 +33,8 @@ function MainNavigator() {
     <MainStack.Navigator screenOptions={{ headerShown: false }} initialRouteName="LandingPage">
       <MainStack.Screen name="LandingPage" component={LandingPage} />
       <MainStack.Screen name="MedicalForm" component={MedicalForm} />
-    </MainStack.Navigator>
+      <MainStack.Screen name="resultsScreen" component={resultsScreen} />
+      </MainStack.Navigator>
   );
 }
 

@@ -13,7 +13,7 @@ import {
 
 const screenWidth = Dimensions.get('window').width;
 
-export default function MedicalForm() {
+export default function MedicalForm({ navigation }) {
   const [selectedTab, setSelectedTab] = useState('basic');
   const [location, setLocation] = useState('');
   const [language, setLanguage] = useState('');
@@ -21,27 +21,13 @@ export default function MedicalForm() {
   const [howAreYou, setHowAreYou] = useState(''); // <-- Added missing state if needed
 
   const handleSubmit = async () => {
-    const payload = {
-      location,
-      language,
-      medical_issue: medicalIssue,
-      how_are_you: howAreYou,
-    };
-
     try {
-      const response = await fetch('http://127.0.0.1:8000/medical-form', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
+      navigation.navigate('resultsScreen', {
+        location,
+        language,
+        medical_issue: medicalIssue,
+        how_are_you: howAreYou
       });
-      const json = await response.json();
-
-      if (response.ok) {
-        Alert.alert('Success', 'Form submitted!');
-        console.log('Backend response:', json);
-      } else {
-        Alert.alert('Error', json.detail || 'Submission failed');
-      }
     } catch (err) {
       console.error(err);
       Alert.alert('Network error', 'Please try again');
@@ -55,33 +41,6 @@ export default function MedicalForm() {
         <Text style={styles.subtitle}>
           Fill out this form to help us find the best healthcare options for you.
         </Text>
-
-        {/* --- Optional: Tabs if you later want them --- */}
-        {/* <View style={styles.tabContainer}>
-          <TouchableOpacity
-            style={[
-              styles.tabButton,
-              selectedTab === 'basic' && styles.tabButtonActive
-            ]}
-            onPress={() => setSelectedTab('basic')}
-          >
-            <Text style={selectedTab === 'basic' ? styles.tabTextActive : styles.tabText}>
-              Basic Information
-            </Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={[
-              styles.tabButton,
-              selectedTab === 'additional' && styles.tabButtonActive
-            ]}
-            onPress={() => setSelectedTab('additional')}
-          >
-            <Text style={selectedTab === 'additional' ? styles.tabTextActive : styles.tabText}>
-              Additional Details
-            </Text>
-          </TouchableOpacity>
-        </View> */}
 
         {/* Basic Info Section */}
         {selectedTab === 'basic' && (
