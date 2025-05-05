@@ -4,7 +4,6 @@ import { FieldError } from 'react';
 import { NavigationContainer } from "@react-navigation/native";
 
 export default async function Login({ navigation }) {
-export default async function Login({navigation}) {
     const [phoneNumber, setPhoneNumber] = useState('');
     const [password, setPassword] = useState('');
 
