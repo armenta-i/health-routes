@@ -62,4 +62,3 @@ async def medical_post(form: MedicalFormRequest):
         traceback.print_exc()
         raise HTTPException(status_code=500, detail=str(e))
 app.include_router(google_routes.router)
-# app.include_router()

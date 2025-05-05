@@ -1,7 +1,10 @@
-import React, { useState, useEffect } from "react";
-import { View, Text, TextInput, StyleSheet, TouchableOpacity } from 'react-native';
+import React, {useState} from "react";
+import {View,Text,TextInput,Button,StyleSheet,TouchableOpacity} from 'react-native';
+import { FieldError } from 'react';
+import { NavigationContainer } from "@react-navigation/native";
 
 export default async function Login({ navigation }) {
+export default async function Login({navigation}) {
     const [phoneNumber, setPhoneNumber] = useState('');
     const [password, setPassword] = useState('');
 
@@ -12,12 +15,13 @@ export default async function Login({ navigation }) {
     console.log(data.results);
 
     const handleLogin = async () => {
+        console.log("Button Pressed")
+        navigation.navigate('LandingPage');
         try {
-            console.log("Button Pressed");
-            const response = await fetch('http://127.0.0.1:8000/login', {
+            const response = await fetch('http://localhost:8000/login', {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json',
+                    'Content-type' : 'application/json',
                 },
                 body: JSON.stringify({
                     phone_number: phoneNumber,
@@ -28,17 +32,16 @@ export default async function Login({ navigation }) {
             const data = await response.json();
 
             if (response.ok) {
-                console.log("Successful: ", data);
-                navigation.navigate('LandingPage');
+                console.log("Successful: ", data)
             } else {
-                console.log("Error fetching data: ", data.detail);
+                console.log("Error fetching data", data.detail);
             }
         } catch (error) {
             console.error('Error during login:', error);
             setError("Network error, please try again later");
         }
-    };
-
+    }
+    
     return (
         <View style={styles.container}>
             <Text style={styles.header}>Login</Text>
@@ -48,18 +51,19 @@ export default async function Login({ navigation }) {
             <TextInput
                 style={styles.input}
                 placeholder="Enter your phone number"
-                onChangeText={setPhoneNumber}
-                value={phoneNumber}
+                onChangeText={newPhone => setPhoneNumber(newPhone)}
+                defaultValue={phoneNumber}
             />
             <TextInput
                 style={styles.input}
                 placeholder="Enter your password"
-                onChangeText={setPassword}
-                value={password}
-                secureTextEntry
+                onChangeText={newPassword => setPassword(newPassword)}
+                defaultValue={password}
             />
 
-            <TouchableOpacity onPress={handleLogin}>
+            <TouchableOpacity
+                onPress={() => navigation.navigate('LandingPage')}
+            >
                 <Text style={styles.navButton}>Login</Text>
             </TouchableOpacity>
         </View>
@@ -81,7 +85,6 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         marginBottom: 12,
         paddingHorizontal: 10,
-        borderRadius: 5,
     },
     header: {
         textAlign: 'center',
@@ -89,31 +92,10 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         marginBottom: 20,
     },
-    button: {
-        backgroundColor: '#000000',
-        paddingVertical: 12,
-        paddingHorizontal: 24,
-        borderRadius: 5,
-        width: '100%',
-        alignItems: 'center',
-        marginBottom: 20,
-    },
-    buttonText: {
-        color: 'white',
-        fontWeight: 'bold',
-        fontSize: 16,
-    },
-    navLink: {
-        color: 'grey',
-        marginTop: 10,
-        fontSize: 16,
-    },
-    navLinkHover: {
-        color: 'black',
-    },
-    errorText: {
-        color: 'red',
-        marginBottom: 15,
-        textAlign: 'center',
+    navButton: {
+        backgroundColor: 'white',
+        paddingVertical: 8,
+        paddingHorizontal: 18,
+        borderRadius: 8,
     }
 });

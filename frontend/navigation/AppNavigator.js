@@ -8,37 +8,9 @@ import LandingPage from '../screens/LandingPage';
 import MedicalForm from '../screens/MedicalForm';
 import CreateUser from '../screens/CreateUser';
 import Login from '../screens/Login';
+import ResultsScreen from '../screens/resultsScreen';
 import OnboardingScreen from '../screens/OnboardingScreen';
-import resultsScreen from '../screens/resultsScreen'; // <--- Import it at the top
-
-// Context
-export const AuthContext = createContext();
-
-// Make Stack Navigators
-const AuthStack = createNativeStackNavigator();
-const MainStack = createNativeStackNavigator();
-const RootStack = createNativeStackNavigator();
-
-// Define Navigators BEFORE AppNavigator
-function AuthNavigator() {
-  return (
-    <AuthStack.Navigator screenOptions={{ headerShown: false }}>
-      <AuthStack.Screen name="OnboardingScreen" component={OnboardingScreen} />
-      <AuthStack.Screen name="Login" component={Login} />
-      <AuthStack.Screen name="CreateUser" component={CreateUser} />
-    </AuthStack.Navigator>
-  );
-}
-
-function MainNavigator() {
-  return (
-    <MainStack.Navigator screenOptions={{ headerShown: false }} initialRouteName="LandingPage">
-      <MainStack.Screen name="LandingPage" component={LandingPage} />
-      <MainStack.Screen name="MedicalForm" component={MedicalForm} />
-      <MainStack.Screen name="resultsScreen" component={resultsScreen} />
-      </MainStack.Navigator>
-  );
-}
+const Stack = createNativeStackNavigator();
 
 export default function AppNavigator() {
   const [isLoading, setIsLoading] = useState(true);
@@ -83,16 +55,15 @@ export default function AppNavigator() {
   }
 
   return (
-    <AuthContext.Provider value={{ userToken, setUserToken }}>
-      <NavigationContainer>
-        <RootStack.Navigator screenOptions={{ headerShown: false }}>
-          {userToken ? (
-            <RootStack.Screen name="Main" component={MainNavigator} />
-          ) : (
-            <RootStack.Screen name="Auth" component={AuthNavigator} />
-          )}
-        </RootStack.Navigator>
-      </NavigationContainer>
-    </AuthContext.Provider>
+    <NavigationContainer>
+      <Stack.Navigator initialRouteName="ResultsScreen" screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="CreateUser" component={CreateUser} />
+        <Stack.Screen name="ResultsScreen" component={ResultsScreen} />
+        <Stack.Screen name="Login" component={Login} />
+        <Stack.Screen name="LandingPage" component={LandingPage} />
+        <Stack.Screen name="MedicalForm" component={MedicalForm} />
+        <Stack.Screen name="OnboardingScreen" component={OnboardingScreen}/>      
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 }
