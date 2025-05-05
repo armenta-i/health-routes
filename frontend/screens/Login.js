@@ -1,24 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { View, Text, TextInput, StyleSheet, TouchableOpacity } from 'react-native';
 
-export default function Login({ navigation }) {
+export default async function Login({ navigation }) {
     const [phoneNumber, setPhoneNumber] = useState('');
     const [password, setPassword] = useState('');
 
-    // Optional: fetch nearby places on load
-    useEffect(() => {
-        const fetchNearby = async () => {
-            try {
-                const url = `http://localhost:8000/api/places/nearby?latitude=37.7749&longitude=-122.4194&radius=1000`;
-                const res = await fetch(url);
-                const data = await res.json();
-                console.log(data.results);
-            } catch (error) {
-                console.error("Nearby fetch error:", error);
-            }
-        };
-        fetchNearby();
-    }, []);
+    const url = `http://localhost:8000/api/places/nearby?latitude=37.7749&longitude=-122.4194&radius=1000`;
+
+    // Changed something related to the await/async fetch method
+    const res = await fetch(url);
+    console.log(data.results);
 
     const handleLogin = async () => {
         try {
@@ -44,12 +35,16 @@ export default function Login({ navigation }) {
             }
         } catch (error) {
             console.error('Error during login:', error);
+            setError("Network error, please try again later");
         }
     };
 
     return (
         <View style={styles.container}>
-            <Text style={styles.header}>Sign In</Text>
+            <Text style={styles.header}>Login</Text>
+
+            {error ? <Text style={styles.errorText}>{error}</Text> : null}
+
             <TextInput
                 style={styles.input}
                 placeholder="Enter your phone number"

@@ -1,8 +1,18 @@
 import { View, Text, TouchableOpacity, ScrollView, StyleSheet, Image, Dimensions } from 'react-native';
 import { SafeAreaView } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Logout } from './Logout';
+import AppNavigator from '../navigation/AppNavigator';
+import { AuthContext } from '../navigation/AppNavigator'; // Adjust path if needed
+import { useContext } from 'react';
+
+
+
 const screenWidth = Dimensions.get('window').width;
 
 export default function LandingPage({navigation}) {
+  const { setUserToken } = useContext(AuthContext);
+
   return (
     <SafeAreaView style={{ flex: 1 }}>
 
@@ -17,6 +27,14 @@ export default function LandingPage({navigation}) {
           >
             <Text style={styles.navButtonText}>Find Care</Text>
           </TouchableOpacity>
+
+          {/* Logout Button */}
+          <TouchableOpacity
+              style={[styles.navButton, { marginLeft: 10 }]} 
+              onPress={() => Logout(setUserToken)}
+            >
+              <Text style={styles.navButtonText}>Logout</Text> 
+            </TouchableOpacity>
         </View>
       </View>
 
@@ -32,21 +50,19 @@ export default function LandingPage({navigation}) {
           </Text>
 
           <View style={styles.heroButtons}>
-            <TouchableOpacity style={styles.primaryButton}>
+            <TouchableOpacity style={styles.primaryButton}
+              onPress={() => navigation.navigate('MedicalForm')}>
               <Text style={styles.primaryButtonText}>Find Care Now →</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.secondaryButton}>
-              <Text style={styles.secondaryButtonText}>Learn More</Text>
             </TouchableOpacity>
           </View>
         </View>
 
-        <View style={styles.heroImageBlock}>
+        {/* <View style={styles.heroImageBlock}>
           <Image
             source={{ uri: 'https://via.placeholder.com/300x200.png?text=Image' }}
             style={styles.heroImage}
             />
-        </View>
+        </View> */}
       </View>
 
       {/* How Fidari Works */}
