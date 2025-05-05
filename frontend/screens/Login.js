@@ -1,26 +1,32 @@
-import React, {useState} from "react";
-import {View,Text,TextInput,Button,StyleSheet,TouchableOpacity} from 'react-native';
-import { FieldError } from 'react';
-import { NavigationContainer } from "@react-navigation/native";
+import React, { useState, useEffect } from "react";
+import { View, Text, TextInput, StyleSheet, TouchableOpacity } from 'react-native';
 
-export default async function Login({navigation}) {
+export default function Login({ navigation }) {
     const [phoneNumber, setPhoneNumber] = useState('');
     const [password, setPassword] = useState('');
 
-    const url = `http://localhost:8000/api/places/nearby?latitude=37.7749&longitude=-122.4194&radius=1000`;
-
-    const res = await fetch(url);
-    const data = await res.json();
-    console.log(data.results);
+    // Optional: fetch nearby places on load
+    useEffect(() => {
+        const fetchNearby = async () => {
+            try {
+                const url = `http://localhost:8000/api/places/nearby?latitude=37.7749&longitude=-122.4194&radius=1000`;
+                const res = await fetch(url);
+                const data = await res.json();
+                console.log(data.results);
+            } catch (error) {
+                console.error("Nearby fetch error:", error);
+            }
+        };
+        fetchNearby();
+    }, []);
 
     const handleLogin = async () => {
-        console.log("Button Pressed")
-        navigation.navigate('LandingPage');
         try {
-            const response = await fetch('http://localhost:8000/login', {
+            console.log("Button Pressed");
+            const response = await fetch('http://127.0.0.1:8000/login', {
                 method: 'POST',
                 headers: {
-                    'Content-type' : 'application/json',
+                    'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
                     phone_number: phoneNumber,
@@ -31,34 +37,34 @@ export default async function Login({navigation}) {
             const data = await response.json();
 
             if (response.ok) {
-                console.log("Successful: ", data)
+                console.log("Successful: ", data);
+                navigation.navigate('LandingPage');
             } else {
-                console.log("Error fetching data", data.detail);
+                console.log("Error fetching data: ", data.detail);
             }
         } catch (error) {
             console.error('Error during login:', error);
         }
-    }
-    
+    };
+
     return (
         <View style={styles.container}>
             <Text style={styles.header}>Sign In</Text>
             <TextInput
                 style={styles.input}
                 placeholder="Enter your phone number"
-                onChangeText={newPhone => setPhoneNumber(newPhone)}
-                defaultValue={phoneNumber}
+                onChangeText={setPhoneNumber}
+                value={phoneNumber}
             />
             <TextInput
                 style={styles.input}
                 placeholder="Enter your password"
-                onChangeText={newPassword => setPassword(newPassword)}
-                defaultValue={password}
+                onChangeText={setPassword}
+                value={password}
+                secureTextEntry
             />
 
-            <TouchableOpacity
-                onPress={() => navigation.navigate('LandingPage')}
-            >
+            <TouchableOpacity onPress={handleLogin}>
                 <Text style={styles.navButton}>Login</Text>
             </TouchableOpacity>
         </View>
@@ -80,6 +86,7 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         marginBottom: 12,
         paddingHorizontal: 10,
+        borderRadius: 5,
     },
     header: {
         textAlign: 'center',
@@ -87,10 +94,31 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         marginBottom: 20,
     },
-    navButton: {
-        backgroundColor: 'white',
-        paddingVertical: 8,
-        paddingHorizontal: 18,
-        borderRadius: 8,
+    button: {
+        backgroundColor: '#000000',
+        paddingVertical: 12,
+        paddingHorizontal: 24,
+        borderRadius: 5,
+        width: '100%',
+        alignItems: 'center',
+        marginBottom: 20,
+    },
+    buttonText: {
+        color: 'white',
+        fontWeight: 'bold',
+        fontSize: 16,
+    },
+    navLink: {
+        color: 'grey',
+        marginTop: 10,
+        fontSize: 16,
+    },
+    navLinkHover: {
+        color: 'black',
+    },
+    errorText: {
+        color: 'red',
+        marginBottom: 15,
+        textAlign: 'center',
     }
 });
