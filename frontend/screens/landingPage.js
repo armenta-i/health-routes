@@ -2,8 +2,7 @@ import { View, Text, TouchableOpacity, ScrollView, StyleSheet, Image, Dimensions
 import { SafeAreaView } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Logout } from './Logout';
-import AppNavigator from '../navigation/AppNavigator';
-import { AuthContext } from '../navigation/AppNavigator'; // Adjust path if needed
+import { AuthContext } from '../context/AuthContext';
 import { useContext } from 'react';
 
 

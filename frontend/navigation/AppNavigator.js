@@ -1,41 +1,41 @@
-import React, { useState, useEffect, createContext } from 'react';
+import React, { useState, useEffect } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
-// Create navigation stacks
-const RootStack = createNativeStackNavigator();
-const AuthStack = createNativeStackNavigator();
-const MainStack = createNativeStackNavigator();
-
-// Screens
-import LandingPage from '../screens/LandingPage';
+import LandingPage from '../screens/landingPage';
 import MedicalForm from '../screens/MedicalForm';
 import CreateUser from '../screens/CreateUser';
 import Login from '../screens/Login';
 import ResultsScreen from '../screens/resultsScreen';
 import OnboardingScreen from '../screens/OnboardingScreen';
+import resultsScreen from '../screens/resultsScreen';
+import { AuthContext } from '../context/AuthContext';
 
-// Create and export AuthContext
-export const AuthContext = createContext();
+// 👇 Create Stack Navigators
+const AuthStack = createNativeStackNavigator();
+const MainStack = createNativeStackNavigator();
+const RootStack = createNativeStackNavigator();
 
-// Auth Navigator component
-const AuthNavigator = () => (
-  <AuthStack.Navigator screenOptions={{ headerShown: false }}>
-    <AuthStack.Screen name="Onboarding" component={OnboardingScreen} />
-    <AuthStack.Screen name="Login" component={Login} />
-    <AuthStack.Screen name="CreateUser" component={CreateUser} />
-  </AuthStack.Navigator>
-);
+// 👇 FIRST: Define Navigators BEFORE AppNavigator
+function AuthNavigator() {
+  return (
+    <AuthStack.Navigator screenOptions={{ headerShown: false }}>
+      <AuthStack.Screen name="OnboardingScreen" component={OnboardingScreen} />
+      <AuthStack.Screen name="Login" component={Login} />
+      <AuthStack.Screen name="CreateUser" component={CreateUser} />
+    </AuthStack.Navigator>
+  );
+}
 
-// Main Navigator component
-const MainNavigator = () => (
-  <MainStack.Navigator screenOptions={{ headerShown: false }}>
-    <MainStack.Screen name="Landing" component={LandingPage} />
-    <MainStack.Screen name="MedicalForm" component={MedicalForm} />
-    <MainStack.Screen name="Results" component={ResultsScreen} />
-  </MainStack.Navigator>
-);
+function MainNavigator() {
+  return (
+    <MainStack.Navigator screenOptions={{ headerShown: false }} initialRouteName="LandingPage">
+      <MainStack.Screen name="LandingPage" component={LandingPage} />
+      <MainStack.Screen name="MedicalForm" component={MedicalForm} />
+      <MainStack.Screen name="resultsScreen" component={resultsScreen} />
+      </MainStack.Navigator>
+  );
+}
 
 export default function AppNavigator() {
   const [isLoading, setIsLoading] = useState(true);

@@ -1,26 +1,28 @@
-import React, {useState} from "react";
-import {View,Text,TextInput,Button,StyleSheet,TouchableOpacity} from 'react-native';
-import { FieldError } from 'react';
-import { NavigationContainer } from "@react-navigation/native";
+import React, { useState, useContext } from "react";
+import { 
+    View, 
+    Text, 
+    TextInput, 
+    StyleSheet, 
+    TouchableOpacity 
+} from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { AuthContext } from '../context/AuthContext';
 
-export default async function Login({ navigation }) {
+export default function Login({navigation}) {
     const [phoneNumber, setPhoneNumber] = useState('');
     const [password, setPassword] = useState('');
-
-    const url = `http://localhost:8000/api/places/nearby?latitude=37.7749&longitude=-122.4194&radius=1000`;
-
-    // Changed something related to the await/async fetch method
-    const res = await fetch(url);
-    console.log(data.results);
+    const [error, setError] = useState('');
+    const [linkPressed, setLinkPressed] = useState(false);
+    const { setUserToken } = useContext(AuthContext);
 
     const handleLogin = async () => {
-        console.log("Button Pressed")
-        navigation.navigate('LandingPage');
+        console.log("Login Button Pressed");
         try {
-            const response = await fetch('http://localhost:8000/login', {
+            const response = await fetch('http://127.0.0.1:8000/login', {
                 method: 'POST',
                 headers: {
-                    'Content-type' : 'application/json',
+                    'Content-type': 'application/json',
                 },
                 body: JSON.stringify({
                     phone_number: phoneNumber,
@@ -31,16 +33,20 @@ export default async function Login({ navigation }) {
             const data = await response.json();
 
             if (response.ok) {
-                console.log("Successful: ", data)
+                console.log("Login Successful:", data);
+                await AsyncStorage.setItem('isLoggedIn', 'true');
+                setUserToken(true);
+                console.log("Login was successful");
             } else {
-                console.log("Error fetching data", data.detail);
+                console.log("Login Error:", data.detail);
+                setError(data.detail || "Login failed");
             }
         } catch (error) {
             console.error('Error during login:', error);
             setError("Network error, please try again later");
         }
-    }
-    
+    };
+
     return (
         <View style={styles.container}>
             <Text style={styles.header}>Login</Text>
@@ -58,12 +64,24 @@ export default async function Login({ navigation }) {
                 placeholder="Enter your password"
                 onChangeText={newPassword => setPassword(newPassword)}
                 defaultValue={password}
+                secureTextEntry={true}
             />
 
             <TouchableOpacity
-                onPress={() => navigation.navigate('LandingPage')}
+                onPress={handleLogin}
+                style={styles.button}
             >
-                <Text style={styles.navButton}>Login</Text>
+                <Text style={styles.buttonText}>Login</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+                onPressIn={() => setLinkPressed(true)}
+                onPressOut={() => setLinkPressed(false)}
+                onPress={() => navigation.navigate('CreateUser')}
+            >
+                <Text style={[styles.navLink, linkPressed && styles.navLinkHover]}>
+                    Don't have an account? Sign up
+                </Text>
             </TouchableOpacity>
         </View>
     );
@@ -84,6 +102,7 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         marginBottom: 12,
         paddingHorizontal: 10,
+        borderRadius: 5,
     },
     header: {
         textAlign: 'center',
@@ -91,10 +110,31 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         marginBottom: 20,
     },
-    navButton: {
-        backgroundColor: 'white',
-        paddingVertical: 8,
-        paddingHorizontal: 18,
-        borderRadius: 8,
+    button: {
+        backgroundColor: '#000000',
+        paddingVertical: 12,
+        paddingHorizontal: 24,
+        borderRadius: 5,
+        width: '100%',
+        alignItems: 'center',
+        marginBottom: 20,
+    },
+    buttonText: {
+        color: 'white',
+        fontWeight: 'bold',
+        fontSize: 16,
+    },
+    navLink: {
+        color: 'grey',
+        marginTop: 10,
+        fontSize: 16,
+    },
+    navLinkHover: {
+        color: 'black',
+    },
+    errorText: {
+        color: 'red',
+        marginBottom: 15,
+        textAlign: 'center',
     }
 });
