@@ -16,6 +16,7 @@ async def create_user(user: UserCreateRequest):
     try:
         user_data = {
             "phonen": user.phone_number,
+            "password": user.password,  # Add password back
             "fist_name": user.full_name.split()[0] if user.full_name.split() else user.full_name,
             "last_name": " ".join(user.full_name.split()[1:]) if len(user.full_name.split()) > 1 else ""
         }

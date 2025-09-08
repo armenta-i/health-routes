@@ -24,9 +24,10 @@ async def login_user(user: UserLoginRequest):
         # Get the first matching user
         stored_user = response.data[0]
         
-        # Your table doesn't have a password column - you need to add one!
-        # For now, temporarily skip password verification
-        # TODO: Add password column to database and enable password verification
+        # Verify password (assuming you added password column)
+        # NOTE: In a production environment, you should use password hashing!
+        if stored_user.get("password") != user.password:
+            raise HTTPException(status_code=401, detail="Invalid phone number or password")
         
         # Return user data on successful login
         return {
