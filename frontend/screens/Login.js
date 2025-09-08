@@ -8,6 +8,7 @@ import {
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { AuthContext } from '../context/AuthContext';
+import config from '../config';
 
 export default function Login({navigation}) {
     const [phoneNumber, setPhoneNumber] = useState('');
@@ -19,7 +20,7 @@ export default function Login({navigation}) {
     const handleLogin = async () => {
         console.log("Login Button Pressed");
         try {
-            const response = await fetch('http://127.0.0.1:8000/login', {
+            const response = await fetch(`${config.API_BASE_URL}/login`, {
                 method: 'POST',
                 headers: {
                     'Content-type': 'application/json',

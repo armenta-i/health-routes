@@ -6,6 +6,7 @@ import {
     StyleSheet,
     TouchableOpacity
 } from 'react-native';
+import config from '../config';
 
 export default function CreateUser({navigation}) {
     const [name, setName] = useState('');
@@ -19,7 +20,7 @@ export default function CreateUser({navigation}) {
 
         try {
             console.log(name, phoneNumber, password);
-            const response = await fetch('http://127.0.0.1:8000/users', {
+            const response = await fetch(`${config.API_BASE_URL}/users`, {
                 method: 'POST',
                 headers: {
                     'Content-type' : 'application/json',

@@ -8,10 +8,8 @@ import hashlib
 import os
 import random
 import string
-from fastapi.middleware.cors import CORSMiddleware
 from app.core.CreateUser_router import router as user_router
 from app.core.LoginUser_router import router as login_router
-from pydantic import BaseModel
 
 load_dotenv()
 app = FastAPI()
@@ -26,9 +24,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.include_router(auth.router, prefix="/auth")
-app.include_router(ai.router, prefix="/ai")
-app.include_router(workflow.router, prefix="/workflow")
 
 class MedicalFormRequest(BaseModel):
     location: str

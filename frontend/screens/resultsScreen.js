@@ -3,6 +3,7 @@ import { View, Text, Button, StyleSheet, Alert, ActivityIndicator, ScrollView } 
 import DirectionsList from './DirectionsList'; 
 import CompassComponent from './CompassComponent';
 import * as Location from 'expo-location';
+import config from '../config';
 
 const PlacesSearch = () => {
   const [location, setLocation] = useState(null);
@@ -44,7 +45,7 @@ const PlacesSearch = () => {
       const { latitude, longitude } = location.coords;
       
       const nearbyResponse = await fetch(
-        `http://localhost:8000/api/places/nearby?latitude=${latitude}&longitude=${longitude}&radius=10000&place_type=hospital`
+        `${config.API_BASE_URL}/api/places/nearby?latitude=${latitude}&longitude=${longitude}&radius=10000&place_type=hospital`
       );
       if (!nearbyResponse.ok) throw new Error('Failed to fetch nearby hospitals');
 
@@ -59,7 +60,7 @@ const PlacesSearch = () => {
       setNearbyHospital(firstHospital);
 
       const detailsResponse = await fetch(
-        `http://localhost:8000/api/places/details?place_id=${firstHospital.place_id}`
+        `${config.API_BASE_URL}/api/places/details?place_id=${firstHospital.place_id}`
       );
       if (!detailsResponse.ok) throw new Error('Failed to fetch hospital details');
 
@@ -70,7 +71,7 @@ const PlacesSearch = () => {
       const destinationLng = detailsData.result.geometry.location.lng;
 
       const directionsResponse = await fetch(
-        `http://localhost:8000/api/places/directions?origin_latitude=${latitude}&origin_longitude=${longitude}&destination_latitude=${destinationLat}&destination_longitude=${destinationLng}`
+        `${config.API_BASE_URL}/api/places/directions?origin_latitude=${latitude}&origin_longitude=${longitude}&destination_latitude=${destinationLat}&destination_longitude=${destinationLng}`
       );
       if (!directionsResponse.ok) throw new Error('Failed to fetch directions');
 
