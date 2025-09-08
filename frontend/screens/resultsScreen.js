@@ -5,7 +5,7 @@ import CompassComponent from './CompassComponent';
 import * as Location from 'expo-location';
 import config from '../config';
 
-const PlacesSearch = () => {
+const PlacesSearch = ({ route }) => {
   const [location, setLocation] = useState(null);
   const [errorMsg, setErrorMsg] = useState(null);
   const [nearbyHospital, setNearbyHospital] = useState(null);
@@ -13,6 +13,62 @@ const PlacesSearch = () => {
   const [directions, setDirections] = useState([]);
   const [loading, setLoading] = useState(false);
   const [screen, setScreen] = useState('info'); // 'info' or 'directions'
+  
+  // Get data from navigation route
+  const { 
+    location: userLocation, 
+    language, 
+    medical_issue, 
+    gemini_response 
+  } = route?.params || {};
+
+  // Function to render formatted Gemini response
+  const renderFormattedResponse = (response) => {
+    if (!response) return null;
+
+    const lines = response.split('\n');
+    const elements = [];
+    let key = 0;
+
+    lines.forEach((line, index) => {
+      const trimmedLine = line.trim();
+      
+      if (!trimmedLine) {
+        // Empty line - add spacing
+        elements.push(<View key={key++} style={styles.spacing} />);
+      } else if (trimmedLine.startsWith('**') && trimmedLine.endsWith('**')) {
+        // Bold headers like **1. Possible Condition:**
+        const headerText = trimmedLine.replace(/\*\*/g, '');
+        elements.push(
+          <Text key={key++} style={styles.sectionHeader}>
+            {headerText}
+          </Text>
+        );
+      } else if (trimmedLine.startsWith('*') && !trimmedLine.startsWith('**')) {
+        // Bullet points like * Call emergency services
+        const bulletText = trimmedLine.replace(/^\*\s*/, '');
+        elements.push(
+          <Text key={key++} style={styles.bulletPoint}>
+            • {bulletText}
+          </Text>
+        );
+      } else {
+        // Regular text
+        const isEmergencyText = trimmedLine.toLowerCase().includes('emergency') || 
+                               trimmedLine.toLowerCase().includes('911') ||
+                               trimmedLine.toLowerCase().includes('immediately') ||
+                               trimmedLine.toLowerCase().includes('life-threatening');
+        
+        elements.push(
+          <Text key={key++} style={isEmergencyText ? styles.emergencyText : styles.regularText}>
+            {trimmedLine}
+          </Text>
+        );
+      }
+    });
+
+    return elements;
+  };
 
   useEffect(() => {
     (async () => {
@@ -87,40 +143,25 @@ const PlacesSearch = () => {
 
   return (
     <ScrollView style={styles.container}>
+      <View style={{ marginTop: 40 }} />
       <Text style={styles.header}>Find Nearest Hospital</Text>
   
       {screen === 'info' && (
         <>
-          {/* Analysis Section */}
+          {/* Medical Advice from Gemini */}
           <View style={styles.analysisBox}>
-            <Text style={styles.analysisTitle}>Analysis:</Text>
-            <Text style={styles.analysisText}>
-              You may be experiencing a serious condition such as gastric distress combined with respiratory difficulty 
-              or a more urgent issue like anaphylaxis, severe gastritis, or even cardiac-related symptoms. 
-              Difficulty breathing is considered a medical emergency.
-            </Text>
-  
-            <Text style={styles.analysisTitle}>Recommended Specialist:</Text>
-            <Text style={styles.analysisText}>
-              You should immediately visit an Emergency Room (ER).
-              {'\n'}After stabilization, specialists who might evaluate you further include:
-              {'\n'}• Emergency Medicine Doctor (immediate care)
-              {'\n'}• Pulmonologist (lung specialist)
-              {'\n'}• Gastroenterologist (stomach specialist)
-            </Text>
-  
-            <Text style={styles.analysisTitle}>Home Remedies:</Text>
-            <Text style={styles.analysisText}>
-              • Do not attempt to self-treat breathing difficulties at home.
-              {'\n'}• Sit upright to make breathing easier.
-              {'\n'}• Avoid eating or drinking anything until you are evaluated by a doctor.
-            </Text>
-  
-            <Text style={styles.emergencyText}>
-              Emergency Warning:
-              {'\n'}Please seek emergency care immediately by calling 911 or going to the nearest Emergency Room. 
-              Difficulty breathing can be life-threatening. Do not delay.
-            </Text>
+            <Text style={styles.analysisTitle}>Medical Advice for: {medical_issue}</Text>
+            <Text style={styles.analysisSubtitle}>Location: {userLocation} | Language: {language}</Text>
+            
+            {gemini_response ? (
+              <ScrollView style={styles.responseContainer}>
+                {renderFormattedResponse(gemini_response)}
+              </ScrollView>
+            ) : (
+              <Text style={styles.analysisText}>
+                Loading medical advice... Please wait while we analyze your symptoms.
+              </Text>
+            )}
           </View>
   
           {/* Error Text if any */}
@@ -208,6 +249,12 @@ const styles = StyleSheet.create({
     marginBottom: 6,
     color: 'black',
   },
+  analysisSubtitle: {
+    fontSize: 14,
+    color: '#666',
+    marginBottom: 12,
+    fontStyle: 'italic',
+  },
   analysisText: {
     fontSize: 14, // make it more readable
     marginBottom: 8,
@@ -238,6 +285,45 @@ const styles = StyleSheet.create({
     marginBottom: 6,
     color: 'black',
     lineHeight: 20,
+  },
+  responseContainer: {
+    maxHeight: 400,
+  },
+  sectionHeader: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#000',
+    marginTop: 12,
+    marginBottom: 8,
+    lineHeight: 22,
+  },
+  bulletPoint: {
+    fontSize: 14,
+    color: '#333',
+    marginBottom: 6,
+    marginLeft: 8,
+    lineHeight: 20,
+  },
+  regularText: {
+    fontSize: 14,
+    color: '#333',
+    marginBottom: 8,
+    lineHeight: 20,
+  },
+  emergencyText: {
+    fontSize: 14,
+    color: '#d32f2f',
+    fontWeight: 'bold',
+    marginBottom: 8,
+    lineHeight: 20,
+    backgroundColor: '#ffebee',
+    padding: 8,
+    borderRadius: 4,
+    borderLeftWidth: 4,
+    borderLeftColor: '#d32f2f',
+  },
+  spacing: {
+    height: 8,
   },
 });
  export default PlacesSearch;

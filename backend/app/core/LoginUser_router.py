@@ -11,7 +11,7 @@ class UserLoginRequest(BaseModel):
 @router.post("/login")
 async def login_user(user: UserLoginRequest):
     try:
-        response = supabase_service.supabase.table("userst").select("*").eq("phonen", user.phone_number).execute()
+        response = supabase_service.supabase.table("userst").select("*").eq("phone_number", user.phone_number).execute()
         print(f"Response data: {response.data}")
     # Debug print the full response
         print(f"Response structure: {type(response)}")
@@ -35,7 +35,7 @@ async def login_user(user: UserLoginRequest):
             "user_id": stored_user.get("user_id"),
             "full_name": f"{stored_user.get('fist_name', '')} {stored_user.get('last_name', '')}".strip(),
             # You can include other user fields that might be needed by the frontend
-            "phone_number": stored_user.get("phonen")
+            "phone_number": stored_user.get("phone_number")
         }
 
     except HTTPException as he:

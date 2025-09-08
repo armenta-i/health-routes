@@ -9,7 +9,9 @@ import {
   SafeAreaView,
   Alert,
   Dimensions,
+  ActivityIndicator,
 } from 'react-native';
+import config from '../config';
 
 const screenWidth = Dimensions.get('window').width;
 
@@ -19,18 +21,53 @@ export default function MedicalForm({ navigation }) {
   const [language, setLanguage] = useState('');
   const [medicalIssue, setMedicalIssue] = useState('');
   const [howAreYou, setHowAreYou] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async () => {
+    // Validation
+    if (!location.trim() || !language.trim() || !medicalIssue.trim()) {
+      Alert.alert('Missing Information', 'Please fill in all required fields');
+      return;
+    }
+
+    setLoading(true);
+    
     try {
-      navigation.navigate('resultsScreen', {
-        location,
-        language,
-        medical_issue: medicalIssue,
-        how_are_you: howAreYou
+      console.log('Submitting medical form...');
+      console.log('API URL:', `${config.API_BASE_URL}/medicalpost`);
+      
+      const response = await fetch(`${config.API_BASE_URL}/medicalpost`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          location: location,
+          language: language,
+          medical_issue: medicalIssue,
+        }),
       });
+
+      const data = await response.json();
+      console.log('API Response:', data);
+
+      if (response.ok) {
+        // Navigate to results screen with the API response
+        navigation.navigate('resultsScreen', {
+          location,
+          language,
+          medical_issue: medicalIssue,
+          how_are_you: howAreYou,
+          gemini_response: data.message // Pass the Gemini response
+        });
+      } else {
+        Alert.alert('Error', 'Failed to get medical advice. Please try again.');
+      }
     } catch (err) {
-      console.error(err);
-      Alert.alert('Network error', 'Please try again');
+      console.error('Medical form submission error:', err);
+      Alert.alert('Network error', 'Please check your connection and try again');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -93,8 +130,19 @@ export default function MedicalForm({ navigation }) {
         )}
 
         {/* Submit Button */}
-        <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
-          <Text style={styles.submitButtonText}>Find Care Options</Text>
+        <TouchableOpacity 
+          style={[styles.submitButton, loading && styles.submitButtonDisabled]} 
+          onPress={handleSubmit}
+          disabled={loading}
+        >
+          {loading ? (
+            <View style={styles.loadingContainer}>
+              <ActivityIndicator color="white" size="small" />
+              <Text style={styles.submitButtonText}>Getting Medical Advice...</Text>
+            </View>
+          ) : (
+            <Text style={styles.submitButtonText}>Get Medical Advice</Text>
+          )}
         </TouchableOpacity>
       </ScrollView>
     </SafeAreaView>
@@ -183,5 +231,13 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 16,
     fontWeight: 'bold',
+  },
+  submitButtonDisabled: {
+    opacity: 0.7,
+  },
+  loadingContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
   },
 });
