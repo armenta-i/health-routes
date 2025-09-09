@@ -13,11 +13,11 @@ logger = logging.getLogger(__name__)
 
 # Load API Key
 load_dotenv()
-GOOGLEMAPS_API_KEY = os.getenv("GOOGLEMAPS_API_KEY")
+# GOOGLEMAPS_API_KEY = os.getenv("GOOGLEMAPS_API_KEY")
 
-if not GOOGLEMAPS_API_KEY:
-    logger.error("GOOGLEMAPS_API_KEY not found in environment variables")
-    raise ValueError("Google Maps API key is required")
+# if not GOOGLEMAPS_API_KEY:
+#     logger.error("GOOGLEMAPS_API_KEY not found in environment variables")
+#     raise ValueError("Google Maps API key is required")
 
 # ---------------------------------
 # 1. Places Nearby Search
