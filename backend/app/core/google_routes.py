@@ -266,48 +266,70 @@ async def get_route_estimate(
                 logger.error(f"Invalid {name}: {value}")
                 return JSONResponse(status_code=400, content={"error": f"{name} must be between -180 and 180"})
         
-        url = "https://maps.googleapis.com/maps/api/directions/json"
-        params = {
-            "origin": f"{origin_latitude},{origin_longitude}",
-            "destination": f"{destination_latitude},{destination_longitude}",
-            "key": GOOGLEMAPS_API_KEY
+        # New Routes API format
+        url = "https://routes.googleapis.com/directions/v2:computeRoutes"
+        
+        request_body = {
+            "origin": {
+                "location": {
+                    "latLng": {
+                        "latitude": origin_latitude,
+                        "longitude": origin_longitude
+                    }
+                }
+            },
+            "destination": {
+                "location": {
+                    "latLng": {
+                        "latitude": destination_latitude,
+                        "longitude": destination_longitude
+                    }
+                }
+            },
+            "travelMode": "DRIVE",
+            "routingPreference": "TRAFFIC_AWARE"
         }
         
-        logger.info(f"Making request to Google Directions API: {url}")
+        headers = {
+            "Content-Type": "application/json",
+            "X-Goog-Api-Key": GOOGLEMAPS_API_KEY,
+            "X-Goog-FieldMask": "routes.duration,routes.distanceMeters,routes.polyline.encodedPolyline"
+        }
+        
+        logger.info(f"Making request to Google Routes API: {url}")
         
         async with httpx.AsyncClient(timeout=30.0) as client:
-            response = await client.get(url, params=params)
+            response = await client.post(url, json=request_body, headers=headers)
             
-            logger.info(f"Google Directions API response status: {response.status_code}")
+            logger.info(f"Google Routes API response status: {response.status_code}")
             
             if response.status_code != 200:
-                logger.error(f"Google Directions API returned status {response.status_code}: {response.text}")
+                logger.error(f"Google Routes API returned status {response.status_code}: {response.text}")
                 return JSONResponse(
                     status_code=502, 
-                    content={"error": f"Google Directions API error: {response.status_code}"}
+                    content={"error": f"Google Routes API error: {response.status_code}"}
                 )
             
             data = response.json()
             
-            if data.get('status') != 'OK':
-                error_message = data.get('error_message', 'Unknown error')
-                status = data.get('status')
-                logger.error(f"Google Directions API error - Status: {status}, Message: {error_message}")
+            # Handle errors for new Routes API
+            if 'error' in data:
+                error = data['error']
+                error_message = error.get('message', 'Unknown error')
+                error_code = error.get('code', 'UNKNOWN')
+                logger.error(f"Google Routes API error - Code: {error_code}, Message: {error_message}")
                 
-                if status == 'REQUEST_DENIED':
+                if error_code == 403 or 'API key' in error_message:
                     return JSONResponse(
                         status_code=403, 
-                        content={"error": "API key invalid or Directions API not enabled"}
+                        content={"error": "API key invalid or Routes API not enabled"}
                     )
-                elif status == 'OVER_QUERY_LIMIT':
+                elif error_code == 429 or 'quota' in error_message.lower():
                     return JSONResponse(
                         status_code=429, 
                         content={"error": "API quota exceeded"}
                     )
-                elif status == 'ZERO_RESULTS':
-                    logger.info("No route found between the specified locations")
-                    return JSONResponse(content={"message": "No route found."})
-                elif status == 'NOT_FOUND':
+                elif 'not found' in error_message.lower():
                     return JSONResponse(
                         status_code=404, 
                         content={"error": "One or more locations could not be geocoded"}
@@ -315,22 +337,40 @@ async def get_route_estimate(
                 else:
                     return JSONResponse(
                         status_code=502, 
-                        content={"error": f"Google Directions API error: {error_message}"}
+                        content={"error": f"Google Routes API error: {error_message}"}
                     )
 
-        # Only return minimal: duration and distance
+        # Parse new Routes API response
         if data.get('routes'):
             try:
-                leg = data['routes'][0]['legs'][0]
+                route = data['routes'][0]
+                
+                # Convert duration from seconds format (e.g., "1234s") to readable format
+                duration_seconds = int(route.get('duration', '0s').rstrip('s'))
+                duration_minutes = duration_seconds // 60
+                duration_hours = duration_minutes // 60
+                
+                if duration_hours > 0:
+                    duration_text = f"{duration_hours} hr {duration_minutes % 60} min"
+                else:
+                    duration_text = f"{duration_minutes} min"
+                
+                # Convert distance from meters to readable format
+                distance_meters = route.get('distanceMeters', 0)
+                if distance_meters >= 1000:
+                    distance_text = f"{distance_meters / 1000:.1f} km"
+                else:
+                    distance_text = f"{distance_meters} m"
+                
                 result = {
-                    "duration": leg['duration']['text'],
-                    "distance": leg['distance']['text'],
-                    "start_address": leg['start_address'],
-                    "end_address": leg['end_address']
+                    "duration": duration_text,
+                    "distance": distance_text,
+                    "start_address": f"{origin_latitude},{origin_longitude}",  # Routes API doesn't return addresses by default
+                    "end_address": f"{destination_latitude},{destination_longitude}"
                 }
                 logger.info(f"Successfully calculated route: {result['distance']}, {result['duration']}")
                 return JSONResponse(content=result)
-            except (KeyError, IndexError) as e:
+            except (KeyError, IndexError, ValueError) as e:
                 logger.error(f"Error parsing route data: {str(e)}")
                 return JSONResponse(status_code=502, content={"error": "Invalid route data from Google API"})
 
@@ -338,10 +378,10 @@ async def get_route_estimate(
         return JSONResponse(content={"message": "No route found."})
 
     except httpx.TimeoutException:
-        logger.error("Request to Google Directions API timed out")
+        logger.error("Request to Google Routes API timed out")
         return JSONResponse(status_code=504, content={"error": "Request timed out"})
     except httpx.NetworkError as e:
-        logger.error(f"Network error connecting to Google Directions API: {str(e)}")
+        logger.error(f"Network error connecting to Google Routes API: {str(e)}")
         return JSONResponse(status_code=502, content={"error": "Network connection error"})
     except Exception as e:
         logger.error(f"Unexpected error in route estimate endpoint: {str(e)}", exc_info=True)
@@ -376,48 +416,70 @@ async def get_full_directions(
                 logger.error(f"Invalid {name}: {value}")
                 return JSONResponse(status_code=400, content={"error": f"{name} must be between -180 and 180"})
         
-        url = "https://maps.googleapis.com/maps/api/directions/json"
-        params = {
-            "origin": f"{origin_latitude},{origin_longitude}",
-            "destination": f"{destination_latitude},{destination_longitude}",
-            "key": GOOGLEMAPS_API_KEY
+        # New Routes API format for detailed directions
+        url = "https://routes.googleapis.com/directions/v2:computeRoutes"
+        
+        request_body = {
+            "origin": {
+                "location": {
+                    "latLng": {
+                        "latitude": origin_latitude,
+                        "longitude": origin_longitude
+                    }
+                }
+            },
+            "destination": {
+                "location": {
+                    "latLng": {
+                        "latitude": destination_latitude,
+                        "longitude": destination_longitude
+                    }
+                }
+            },
+            "travelMode": "DRIVE",
+            "routingPreference": "TRAFFIC_AWARE"
         }
         
-        logger.info(f"Making request to Google Directions API: {url}")
+        headers = {
+            "Content-Type": "application/json",
+            "X-Goog-Api-Key": GOOGLEMAPS_API_KEY,
+            "X-Goog-FieldMask": "routes.legs.steps.navigationInstruction,routes.legs.steps.distanceMeters,routes.legs.steps.staticDuration"
+        }
+        
+        logger.info(f"Making request to Google Routes API: {url}")
         
         async with httpx.AsyncClient(timeout=30.0) as client:
-            response = await client.get(url, params=params)
+            response = await client.post(url, json=request_body, headers=headers)
             
-            logger.info(f"Google Directions API response status: {response.status_code}")
+            logger.info(f"Google Routes API response status: {response.status_code}")
             
             if response.status_code != 200:
-                logger.error(f"Google Directions API returned status {response.status_code}: {response.text}")
+                logger.error(f"Google Routes API returned status {response.status_code}: {response.text}")
                 return JSONResponse(
                     status_code=502, 
-                    content={"error": f"Google Directions API error: {response.status_code}"}
+                    content={"error": f"Google Routes API error: {response.status_code}"}
                 )
             
             data = response.json()
             
-            if data.get('status') != 'OK':
-                error_message = data.get('error_message', 'Unknown error')
-                status = data.get('status')
-                logger.error(f"Google Directions API error - Status: {status}, Message: {error_message}")
+            # Handle errors for new Routes API
+            if 'error' in data:
+                error = data['error']
+                error_message = error.get('message', 'Unknown error')
+                error_code = error.get('code', 'UNKNOWN')
+                logger.error(f"Google Routes API error - Code: {error_code}, Message: {error_message}")
                 
-                if status == 'REQUEST_DENIED':
+                if error_code == 403 or 'API key' in error_message:
                     return JSONResponse(
                         status_code=403, 
-                        content={"error": "API key invalid or Directions API not enabled"}
+                        content={"error": "API key invalid or Routes API not enabled"}
                     )
-                elif status == 'OVER_QUERY_LIMIT':
+                elif error_code == 429 or 'quota' in error_message.lower():
                     return JSONResponse(
                         status_code=429, 
                         content={"error": "API quota exceeded"}
                     )
-                elif status == 'ZERO_RESULTS':
-                    logger.info("No directions found between the specified locations")
-                    return JSONResponse(content={"steps": []})
-                elif status == 'NOT_FOUND':
+                elif 'not found' in error_message.lower():
                     return JSONResponse(
                         status_code=404, 
                         content={"error": "One or more locations could not be geocoded"}
@@ -425,25 +487,50 @@ async def get_full_directions(
                 else:
                     return JSONResponse(
                         status_code=502, 
-                        content={"error": f"Google Directions API error: {error_message}"}
+                        content={"error": f"Google Routes API error: {error_message}"}
                     )
 
-        # Extract steps nicely
+        # Extract steps from new Routes API format
         steps = []
         if data.get('routes'):
             try:
-                route_steps = data['routes'][0]['legs'][0]['steps']
-                logger.info(f"Processing {len(route_steps)} direction steps")
-                
-                for step in route_steps:
-                    steps.append({
-                        "instruction": step.get('html_instructions', ''),
-                        "distance": step.get('distance', {}).get('text', ''),
-                        "duration": step.get('duration', {}).get('text', '')
-                    })
+                # New Routes API structure: routes[0].legs[0].steps
+                legs = data['routes'][0].get('legs', [])
+                if legs:
+                    route_steps = legs[0].get('steps', [])
+                    logger.info(f"Processing {len(route_steps)} direction steps")
                     
-                logger.info(f"Successfully processed {len(steps)} direction steps")
-            except (KeyError, IndexError) as e:
+                    for step in route_steps:
+                        # Convert duration from seconds format
+                        duration_seconds = int(step.get('staticDuration', '0s').rstrip('s'))
+                        duration_minutes = duration_seconds // 60
+                        
+                        if duration_minutes > 0:
+                            duration_text = f"{duration_minutes} min"
+                        else:
+                            duration_text = "< 1 min"
+                        
+                        # Convert distance from meters
+                        distance_meters = step.get('distanceMeters', 0)
+                        if distance_meters >= 1000:
+                            distance_text = f"{distance_meters / 1000:.1f} km"
+                        else:
+                            distance_text = f"{distance_meters} m"
+                        
+                        # Get navigation instruction
+                        nav_instruction = step.get('navigationInstruction', {})
+                        instruction = nav_instruction.get('instructions', 'Continue straight')
+                        
+                        steps.append({
+                            "instruction": instruction,
+                            "distance": distance_text,
+                            "duration": duration_text
+                        })
+                        
+                    logger.info(f"Successfully processed {len(steps)} direction steps")
+                else:
+                    logger.warning("No legs found in route")
+            except (KeyError, IndexError, ValueError) as e:
                 logger.error(f"Error parsing directions data: {str(e)}")
                 return JSONResponse(status_code=502, content={"error": "Invalid directions data from Google API"})
         else:
@@ -452,10 +539,10 @@ async def get_full_directions(
         return JSONResponse(content={"steps": steps})
 
     except httpx.TimeoutException:
-        logger.error("Request to Google Directions API timed out")
+        logger.error("Request to Google Routes API timed out")
         return JSONResponse(status_code=504, content={"error": "Request timed out"})
     except httpx.NetworkError as e:
-        logger.error(f"Network error connecting to Google Directions API: {str(e)}")
+        logger.error(f"Network error connecting to Google Routes API: {str(e)}")
         return JSONResponse(status_code=502, content={"error": "Network connection error"})
     except Exception as e:
         logger.error(f"Unexpected error in full directions endpoint: {str(e)}", exc_info=True)

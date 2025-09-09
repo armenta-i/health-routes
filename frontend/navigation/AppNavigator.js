@@ -6,7 +6,6 @@ import LandingPage from '../screens/landingPage';
 import MedicalForm from '../screens/MedicalForm';
 import CreateUser from '../screens/CreateUser';
 import Login from '../screens/Login';
-import ResultsScreen from '../screens/resultsScreen';
 import OnboardingScreen from '../screens/OnboardingScreen';
 import resultsScreen from '../screens/resultsScreen';
 import { AuthContext } from '../context/AuthContext';

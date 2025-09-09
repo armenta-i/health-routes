@@ -10,10 +10,35 @@ import {
   Alert,
   Dimensions,
   ActivityIndicator,
+  Modal,
+  FlatList,
 } from 'react-native';
 import config from '../config';
 
 const screenWidth = Dimensions.get('window').width;
+
+const languages = [
+  'English',
+  'Spanish',
+  'French',
+  'German',
+  'Italian',
+  'Portuguese',
+  'Russian',
+  'Chinese (Mandarin)',
+  'Japanese',
+  'Korean',
+  'Arabic',
+  'Hindi',
+  'Vietnamese',
+  'Tagalog',
+  'Polish',
+  'Dutch',
+  'Swedish',
+  'Norwegian',
+  'Danish',
+  'Other'
+];
 
 export default function MedicalForm({ navigation }) {
   const [selectedTab, setSelectedTab] = useState('basic');
@@ -22,6 +47,12 @@ export default function MedicalForm({ navigation }) {
   const [medicalIssue, setMedicalIssue] = useState('');
   const [howAreYou, setHowAreYou] = useState('');
   const [loading, setLoading] = useState(false);
+  const [showLanguageModal, setShowLanguageModal] = useState(false);
+
+  const selectLanguage = (selectedLanguage) => {
+    setLanguage(selectedLanguage);
+    setShowLanguageModal(false);
+  };
 
   const handleSubmit = async () => {
     // Validation
@@ -105,12 +136,15 @@ export default function MedicalForm({ navigation }) {
             </Text>
 
             <Text style={styles.label}>Preferred Language</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="Select your preferred language"
-              value={language}
-              onChangeText={setLanguage}
-            />
+            <TouchableOpacity 
+              style={styles.dropdown}
+              onPress={() => setShowLanguageModal(true)}
+            >
+              <Text style={[styles.dropdownText, !language && styles.placeholderText]}>
+                {language || 'Select your preferred language'}
+              </Text>
+              <Text style={styles.dropdownArrow}>▼</Text>
+            </TouchableOpacity>
             <Text style={styles.helperText}>
               We'll try to match you with providers who speak your language.
             </Text>
@@ -145,6 +179,46 @@ export default function MedicalForm({ navigation }) {
           )}
         </TouchableOpacity>
       </ScrollView>
+
+      {/* Language Selection Modal */}
+      <Modal
+        visible={showLanguageModal}
+        animationType="slide"
+        presentationStyle="pageSheet"
+      >
+        <SafeAreaView style={styles.modalContainer}>
+          <View style={styles.modalHeader}>
+            <Text style={styles.modalTitle}>Select Language</Text>
+            <TouchableOpacity onPress={() => setShowLanguageModal(false)}>
+              <Text style={styles.closeButton}>✕</Text>
+            </TouchableOpacity>
+          </View>
+          
+          <FlatList
+            data={languages}
+            keyExtractor={(item) => item}
+            renderItem={({ item }) => (
+              <TouchableOpacity
+                style={[
+                  styles.languageOption,
+                  language === item && styles.selectedLanguageOption
+                ]}
+                onPress={() => selectLanguage(item)}
+              >
+                <Text style={[
+                  styles.languageOptionText,
+                  language === item && styles.selectedLanguageText
+                ]}>
+                  {item}
+                </Text>
+                {language === item && (
+                  <Text style={styles.checkmark}>✓</Text>
+                )}
+              </TouchableOpacity>
+            )}
+          />
+        </SafeAreaView>
+      </Modal>
     </SafeAreaView>
   );
 }
@@ -215,6 +289,31 @@ const styles = StyleSheet.create({
     height: 140,
     marginBottom: 16
   },
+  dropdown: {
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 8,
+    paddingHorizontal: 12,
+    paddingVertical: 12,
+    marginBottom: 8,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    backgroundColor: '#fff'
+  },
+  dropdownText: {
+    fontSize: 16,
+    color: '#000',
+    flex: 1
+  },
+  placeholderText: {
+    color: '#999'
+  },
+  dropdownArrow: {
+    fontSize: 12,
+    color: '#666',
+    marginLeft: 8
+  },
   helperText: {
     fontSize: 12,
     color: '#999',
@@ -239,5 +338,55 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
+  },
+  
+  // Modal Styles
+  modalContainer: {
+    flex: 1,
+    backgroundColor: '#fff'
+  },
+  modalHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: 20,
+    borderBottomWidth: 1,
+    borderBottomColor: '#eee',
+  },
+  modalTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#000'
+  },
+  closeButton: {
+    fontSize: 24,
+    color: '#666',
+    padding: 5,
+  },
+  languageOption: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    paddingVertical: 15,
+    borderBottomWidth: 1,
+    borderBottomColor: '#f0f0f0',
+  },
+  selectedLanguageOption: {
+    backgroundColor: '#f8f9fa',
+  },
+  languageOptionText: {
+    fontSize: 16,
+    color: '#333',
+    flex: 1,
+  },
+  selectedLanguageText: {
+    color: '#000',
+    fontWeight: '600',
+  },
+  checkmark: {
+    fontSize: 18,
+    color: '#000',
+    fontWeight: 'bold',
   },
 });

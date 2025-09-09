@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, Button, StyleSheet, Alert, ActivityIndicator, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, Alert, ActivityIndicator, ScrollView, TouchableOpacity, SafeAreaView } from 'react-native';
 import DirectionsList from './DirectionsList'; 
 import CompassComponent from './CompassComponent';
 import * as Location from 'expo-location';
 import config from '../config';
+import MapComponent from './MapComponent';
 
-const PlacesSearch = ({ route }) => {
+const PlacesSearch = ({ route, navigation }) => {
   const [location, setLocation] = useState(null);
   const [errorMsg, setErrorMsg] = useState(null);
   const [nearbyHospital, setNearbyHospital] = useState(null);
@@ -141,154 +142,246 @@ const PlacesSearch = ({ route }) => {
     }
   };
 
+  if (screen === 'directions' && hospitalDetails) {
+    return (
+      <MapComponent 
+        destination={{
+          latitude: hospitalDetails.geometry.location.lat,
+          longitude: hospitalDetails.geometry.location.lng
+        }}
+        directions={directions}
+        hospitalDetails={hospitalDetails}
+        onBackPress={() => setScreen('info')}
+        onHomePress={() => navigation.goBack()}
+      />
+    );
+  }
+
   return (
-    <ScrollView style={styles.container}>
-      <View style={{ marginTop: 40 }} />
-      <Text style={styles.header}>Find Nearest Hospital</Text>
+    <SafeAreaView style={styles.safeArea}>
+      {/* Top Header */}
+      <View style={styles.headerContainer}>
+        <View style={styles.headerSpacer} />
+        <TouchableOpacity
+          style={styles.homeButton}
+          onPress={() => navigation.goBack()}
+        >
+          <Text style={styles.homeButtonText}>← Back</Text>
+        </TouchableOpacity>
+      </View>
+
+      <ScrollView style={styles.container}>
+        <Text style={styles.title}>Medical Assessment Results</Text>
+        <Text style={styles.subtitle}>
+          Here are your personalized healthcare recommendations and nearby hospital information.
+        </Text>
   
-      {screen === 'info' && (
-        <>
-          {/* Medical Advice from Gemini */}
-          <View style={styles.analysisBox}>
-            <Text style={styles.analysisTitle}>Medical Advice for: {medical_issue}</Text>
-            <Text style={styles.analysisSubtitle}>Location: {userLocation} | Language: {language}</Text>
-            
-            {gemini_response ? (
-              <ScrollView style={styles.responseContainer}>
-                {renderFormattedResponse(gemini_response)}
-              </ScrollView>
-            ) : (
-              <Text style={styles.analysisText}>
+        {/* Medical Advice from Gemini */}
+        <View style={styles.medicalAdviceSection}>
+          <Text style={styles.sectionTitle}>Medical Advice</Text>
+          <Text style={styles.conditionText}>Condition: {medical_issue}</Text>
+          <Text style={styles.locationText}>Location: {userLocation} | Language: {language}</Text>
+          
+          {gemini_response ? (
+            <View style={styles.adviceContainer}>
+              {renderFormattedResponse(gemini_response)}
+            </View>
+          ) : (
+            <View style={styles.loadingAdvice}>
+              <ActivityIndicator size="small" color="#666" />
+              <Text style={styles.loadingText}>
                 Loading medical advice... Please wait while we analyze your symptoms.
               </Text>
-            )}
-          </View>
-  
-          {/* Error Text if any */}
-          {errorMsg && <Text style={styles.errorText}>{errorMsg}</Text>}
-  
-          {/* Loading */}
-          {loading && <ActivityIndicator size="large" color="black" style={{ marginVertical: 10 }} />}
-  
-          {/* Hospital Details */}
-          {hospitalDetails && (
-            <View style={styles.detailsBox}>
-              <Text style={styles.detailsTitle}>Hospital Details</Text>
-              <Text style={styles.detail}>Name: {hospitalDetails.name}</Text>
-              <Text style={styles.detail}>Address: {hospitalDetails.formatted_address}</Text>
-              <Text style={styles.detail}>Phone: {hospitalDetails.formatted_phone_number || 'N/A'}</Text>
-              <Text style={styles.detail}>Coordinates: {hospitalDetails.geometry?.location?.lat}, {hospitalDetails.geometry?.location?.lng}</Text>
             </View>
           )}
-  
-          {/* View Directions Button */}
-          {directions.length > 0 && (
-            <Button
-              title="View Directions"
-              onPress={() => setScreen('directions')}
-              color="black"
-            />
-          )}
-        </>
-      )}
-  
-      {screen === 'directions' && (
-        <>
-          <DirectionsList directions={directions} />
-          <CompassComponent />
-          <View style={{ marginTop: 20 }}>
-            <Button
-              title="Return to Hospital Info"
-              onPress={() => setScreen('info')}
-              color="black"
-            />
+        </View>
+
+        {/* Error Display */}
+        {errorMsg && (
+          <View style={styles.errorContainer}>
+            <Text style={styles.errorText}>{errorMsg}</Text>
           </View>
-        </>
-      )}
-    </ScrollView>
+        )}
+
+        {/* Loading Hospital Info */}
+        {loading && (
+          <View style={styles.loadingContainer}>
+            <ActivityIndicator size="large" color="#000" />
+            <Text style={styles.loadingText}>Finding nearest hospital...</Text>
+          </View>
+        )}
+
+        {/* Hospital Details */}
+        {hospitalDetails && (
+          <View style={styles.hospitalSection}>
+            <Text style={styles.sectionTitle}>Nearest Hospital</Text>
+            <View style={styles.hospitalCard}>
+              <Text style={styles.hospitalName}>{hospitalDetails.name}</Text>
+              <Text style={styles.hospitalDetail}>Address: {hospitalDetails.formatted_address}</Text>
+              <Text style={styles.hospitalDetail}>Phone: {hospitalDetails.formatted_phone_number || 'N/A'}</Text>
+            </View>
+            
+            {/* Navigation Button */}
+            {directions.length > 0 && (
+              <TouchableOpacity
+                style={styles.navigationButton}
+                onPress={() => setScreen('directions')}
+              >
+                <Text style={styles.navigationButtonText}>Get Directions</Text>
+              </TouchableOpacity>
+            )}
+          </View>
+        )}
+      </ScrollView>
+    </SafeAreaView>
   );
   
 };
 
 const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: '#fff'
+  },
+  headerContainer: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    paddingTop: 10,
+  },
+  headerSpacer: {
+    flex: 1,
+  },
+  homeButton: {
+    backgroundColor: '#000',
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    borderRadius: 20,
+  },
+  homeButtonText: {
+    color: '#fff',
+    fontWeight: 'bold',
+  },
   container: {
     flex: 1,
-    padding: 16,
-    backgroundColor: '#fff',
+    padding: 24,
+    paddingBottom: 40
   },
-  header: {
-    fontSize: 22, // slightly smaller
+  title: {
+    fontSize: 26,
     fontWeight: 'bold',
-    marginBottom: 16,
-    color: 'black',
+    marginBottom: 8,
+    color: '#000'
+  },
+  subtitle: {
+    fontSize: 16,
+    color: '#666',
+    marginBottom: 24,
+    lineHeight: 22
+  },
+  
+  // Medical Advice Section
+  medicalAdviceSection: {
+    marginBottom: 32,
+  },
+  sectionTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginBottom: 12,
+    color: '#000'
+  },
+  conditionText: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#333',
+    marginBottom: 4
   },
   locationText: {
-    marginBottom: 16,
-    color: 'black',
-    fontSize: 14, // match rest of font
-  },
-  errorText: {
-    color: 'red',
-    marginBottom: 16,
-    fontSize: 14, // match
-  },
-  analysisBox: {
-    backgroundColor: '#f9f9f9',
-    borderRadius: 8,
-    padding: 16,
-    marginBottom: 20,
-    shadowColor: 'gray',
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-    shadowOffset: { width: 0, height: 2 },
-    elevation: 3,
-  },
-  analysisTitle: {
-    fontSize: 16, // smaller and uniform
-    fontWeight: 'bold',
-    marginBottom: 6,
-    color: 'black',
-  },
-  analysisSubtitle: {
     fontSize: 14,
     color: '#666',
-    marginBottom: 12,
-    fontStyle: 'italic',
+    marginBottom: 16
   },
-  analysisText: {
-    fontSize: 14, // make it more readable
-    marginBottom: 8,
-    color: 'black',
-    lineHeight: 20, // slightly more spacing
-  },
-  emergencyText: {
-    fontSize: 14,
-    marginTop: 12,
-    color: 'red',
-    fontWeight: 'bold',
-    lineHeight: 20,
-  },
-  detailsBox: {
-    marginTop: 20,
+  adviceContainer: {
+    backgroundColor: '#f8f9fa',
+    borderRadius: 12,
     padding: 16,
-    backgroundColor: '#f2f2f2',
-    borderRadius: 8,
+    borderLeftWidth: 4,
+    borderLeftColor: '#000',
   },
-  detailsTitle: {
+  loadingAdvice: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 16,
+    backgroundColor: '#f8f9fa',
+    borderRadius: 12,
+    gap: 8,
+  },
+  loadingText: {
+    fontSize: 14,
+    color: '#666',
+    fontStyle: 'italic'
+  },
+  
+  // Error Handling
+  errorContainer: {
+    backgroundColor: '#ffebee',
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 24,
+    borderLeftWidth: 4,
+    borderLeftColor: '#d32f2f',
+  },
+  errorText: {
+    color: '#d32f2f',
+    fontSize: 14,
+    fontWeight: '600'
+  },
+  
+  // Loading States
+  loadingContainer: {
+    alignItems: 'center',
+    padding: 32,
+    gap: 8,
+  },
+  
+  // Hospital Section
+  hospitalSection: {
+    marginBottom: 32,
+  },
+  hospitalCard: {
+    backgroundColor: '#f8f9fa',
+    borderRadius: 12,
+    padding: 20,
+    marginBottom: 16,
+    borderWidth: 1,
+    borderColor: '#e9ecef',
+  },
+  hospitalName: {
     fontSize: 18,
     fontWeight: 'bold',
-    marginBottom: 10,
-    color: 'black',
+    color: '#000',
+    marginBottom: 12
   },
-  detail: {
+  hospitalDetail: {
     fontSize: 14,
-    marginBottom: 6,
-    color: 'black',
-    lineHeight: 20,
+    color: '#333',
+    marginBottom: 8,
+    lineHeight: 20
   },
-  responseContainer: {
-    maxHeight: 400,
+  navigationButton: {
+    backgroundColor: '#000',
+    paddingVertical: 16,
+    borderRadius: 8,
+    alignItems: 'center',
   },
+  navigationButtonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  
+  // Response formatting (keeping existing ones for Gemini response)
   sectionHeader: {
     fontSize: 16,
     fontWeight: 'bold',
