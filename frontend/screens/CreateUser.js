@@ -20,6 +20,12 @@ export default function CreateUser({ navigation }) {
         setLoading(true);
         setErrorMessage("");
 
+        if (email == '' || password == '') {
+                setErrorMessage('Email and Password required. Try Again.');
+                setLoading(false);
+                return;
+        }
+
         const { data, error } = await supabase.auth.signUp({
         email,
         password,
@@ -99,7 +105,11 @@ export default function CreateUser({ navigation }) {
         paddingHorizontal: 10,
         borderRadius: 5,
     },
-    header: { textAlign: "center", fontSize: 32, fontWeight: "bold", marginBottom: 32 },
+    header: { 
+        textAlign: "center", 
+        fontSize: 32, 
+        fontWeight: "bold", 
+        marginBottom: 20 },
     button: {
         marginBottom: 20,
     },

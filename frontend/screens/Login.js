@@ -25,8 +25,15 @@ export default function Login({navigation}) {
 
     const handleLogin = async () => {
         setLoading(true);
+        setErrorMessage("");
         console.log("Login Button Pressed");
         try {
+            if (email == '' || password == '') {
+                setErrorMessage('Email and Password required. Try Again.');
+                setLoading(false);
+                return;
+            }
+
             const { data, error } = await supabase.auth.signInWithPassword({
                 email,
                 password
@@ -126,7 +133,7 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         fontSize: 32,
         fontWeight: 'bold',
-        marginBottom: 32,
+        marginBottom: 20,
     },
     button: {
         width: '100%',
