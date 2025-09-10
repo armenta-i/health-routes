@@ -345,7 +345,7 @@ const styles = StyleSheet.create({
   fullscreenContainer: {
     flex: 1,
     backgroundColor: '#fff', // Changed from #000 to match rounding
-    padding: 10, // Added padding for rounded effect
+    padding: 4, // Added padding for rounded effect
   },
   fullscreenMap: {
     width: '100%',
@@ -435,7 +435,7 @@ const styles = StyleSheet.create({
   // Bottom Controls
   bottomControls: {
     position: 'absolute',
-    bottom: 40,
+    bottom: 50,
     left: 20,
     right: 20,
     zIndex: 10,
@@ -532,7 +532,7 @@ const styles = StyleSheet.create({
     width: 30,
     height: 30,
     borderRadius: 15,
-    backgroundColor: '#007AFF',
+    backgroundColor: '#000',
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: 15,

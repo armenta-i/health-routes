@@ -390,12 +390,14 @@ async def get_route_estimate(
                 else:
                     duration_text = f"{duration_minutes} min"
                 
-                # Convert distance from meters to readable format
+                # Convert distance from meters to miles/feet only
                 distance_meters = route.get('distanceMeters', 0)
-                if distance_meters >= 1000:
-                    distance_text = f"{distance_meters / 1000:.1f} km"
-                else:
-                    distance_text = f"{distance_meters} m"
+                distance_miles = distance_meters * 0.000621371  # Convert meters to miles
+                if distance_miles >= 1:
+                    distance_text = f"{distance_miles:.1f} mi"
+                else:  # For all distances under 1 mile, show feet
+                    distance_feet = distance_meters * 3.28084
+                    distance_text = f"{distance_feet:.0f} ft"
                 
                 result = {
                     "duration": duration_text,
@@ -545,12 +547,14 @@ async def get_full_directions(
                         else:
                             duration_text = "< 1 min"
                         
-                        # Convert distance from meters
+                        # Convert distance from meters to miles/feet only
                         distance_meters = step.get('distanceMeters', 0)
-                        if distance_meters >= 1000:
-                            distance_text = f"{distance_meters / 1000:.1f} km"
-                        else:
-                            distance_text = f"{distance_meters} m"
+                        distance_miles = distance_meters * 0.000621371  # Convert meters to miles
+                        if distance_miles >= 1:
+                            distance_text = f"{distance_miles:.1f} mi"
+                        else:  # For all distances under 1 mile, show feet
+                            distance_feet = distance_meters * 3.28084
+                            distance_text = f"{distance_feet:.0f} ft"
                         
                         # Get navigation instruction
                         nav_instruction = step.get('navigationInstruction', {})

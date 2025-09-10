@@ -83,7 +83,7 @@ const styles = StyleSheet.create({
   button: {
     alignItems: 'center',
     justifyContent: 'center',
-    borderRadius: 8,
+    borderRadius: 6,
   },
   
   // Size variants
@@ -111,7 +111,7 @@ const styles = StyleSheet.create({
   },
   navButton: {
     backgroundColor: '#000',
-    borderRadius: 20,
+    borderRadius: 8,
     paddingVertical: 8,
     paddingHorizontal: 16,
   },

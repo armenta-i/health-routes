@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, Alert, ActivityIndicator, ScrollView, TouchableOpacity, SafeAreaView } from 'react-native';
-import DirectionsList from './DirectionsList'; 
-import CompassComponent from './CompassComponent';
 import * as Location from 'expo-location';
 import config from '../config';
 import MapComponent from './MapComponent';
@@ -41,11 +39,26 @@ const PlacesSearch = ({ route, navigation }) => {
       } else if (trimmedLine.startsWith('**') && trimmedLine.endsWith('**')) {
         // Bold headers like **1. Possible Condition:**
         const headerText = trimmedLine.replace(/\*\*/g, '');
-        elements.push(
-          <Text key={key++} style={styles.sectionHeader}>
-            {headerText}
-          </Text>
-        );
+        
+        // Check if this is a numbered section (e.g., "1. Possible Condition:")
+        const numberMatch = headerText.match(/^(\d+)\.\s*(.+)/);
+        if (numberMatch) {
+          const [, number, title] = numberMatch;
+          elements.push(
+            <View key={key++} style={styles.numberedSectionContainer}>
+              <View style={styles.numberCircle}>
+                <Text style={styles.numberText}>{number}</Text>
+              </View>
+              <Text style={styles.numberedSectionTitle}>{title}</Text>
+            </View>
+          );
+        } else {
+          elements.push(
+            <Text key={key++} style={styles.sectionHeader}>
+              {headerText}
+            </Text>
+          );
+        }
       } else if (trimmedLine.startsWith('*') && !trimmedLine.startsWith('**')) {
         // Bullet points like * Call emergency services
         const bulletText = trimmedLine.replace(/^\*\s*/, '');
@@ -180,13 +193,8 @@ const PlacesSearch = ({ route, navigation }) => {
       </View>
 
       <ScrollView style={styles.container}>
-        <Text style={styles.title}>Medical Assessment Results</Text>
-        <Text style={styles.subtitle}>
-          Here are your personalized healthcare recommendations and nearby hospital information.
-        </Text>
-  
         {/* Medical Advice from Gemini */}
-        <View style={styles.medicalAdviceSection}>
+        <View style={styles.title}>
           <Text style={styles.sectionTitle}>Medical Advice</Text>
           <Text style={styles.conditionText}>Condition: {medical_issue}</Text>
           <Text style={styles.locationText}>Location: {userLocation} | Language: {language}</Text>
@@ -270,13 +278,13 @@ const styles = StyleSheet.create({
     paddingBottom: 40
   },
   title: {
-    fontSize: 32,
+    fontSize: 29,
     fontWeight: 'bold',
-    marginBottom: 16,
+    marginBottom: 10,
     color: '#000'
   },
   subtitle: {
-    fontSize: 16,
+    fontSize: 12,
     color: '#666',
     marginBottom: 32,
     lineHeight: 22
@@ -307,8 +315,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#f8f9fa',
     borderRadius: 12,
     padding: 16,
-    borderLeftWidth: 4,
-    borderLeftColor: '#000',
+    // borderLeftWidth: 4,
+    // borderLeftColor: '#000',
   },
   loadingAdvice: {
     flexDirection: 'row',
@@ -377,7 +385,7 @@ const styles = StyleSheet.create({
     lineHeight: 20
   },
   navigationButton: {
-    marginTop: 8,
+    marginTop: 20,
   },
   
   // Response formatting (keeping existing ones for Gemini response)
@@ -388,6 +396,33 @@ const styles = StyleSheet.create({
     marginTop: 12,
     marginBottom: 8,
     lineHeight: 22,
+  },
+  numberedSectionContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 16,
+    marginBottom: 12,
+  },
+  numberCircle: {
+    backgroundColor: '#000',
+    borderRadius: 20,
+    width: 32,
+    height: 32,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 12,
+  },
+  numberText: {
+    color: '#fff',
+    fontWeight: 'bold',
+    fontSize: 16,
+  },
+  numberedSectionTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#000',
+    flex: 1,
+    lineHeight: 24,
   },
   bulletPoint: {
     fontSize: 14,
