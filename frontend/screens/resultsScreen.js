@@ -1,9 +1,19 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Alert, ActivityIndicator, ScrollView, TouchableOpacity, SafeAreaView } from 'react-native';
+import { View, 
+  Text, 
+  StyleSheet, 
+  Alert, 
+  ActivityIndicator, 
+  ScrollView, 
+  TouchableOpacity, 
+  SafeAreaView,
+  Linking 
+} from 'react-native';
 import * as Location from 'expo-location';
 import config from '../config';
 import MapComponent from './MapComponent';
 import Button from '../components/Button';
+import { emergencyNumbers } from '../utils/emergencyNumbers';
 
 const PlacesSearch = ({ route, navigation }) => {
   const [location, setLocation] = useState(null);
@@ -13,6 +23,22 @@ const PlacesSearch = ({ route, navigation }) => {
   const [directions, setDirections] = useState([]);
   const [loading, setLoading] = useState(false);
   const [screen, setScreen] = useState('info'); // 'info' or 'directions'
+  const [phoneNumber, setPhoneNumber] = useState('');
+
+    // Get country from device location
+  const setCountryFromLocation = async (latitude, longitude) => {
+    try {
+      const address = await Location.reverseGeocodeAsync({ latitude, longitude });
+      if (address && address[0]) {
+        setPhoneNumber(address[0].isoCountryCode); // This gives you 'US', 'CA', etc.
+        console.log(phoneNumber);
+      }
+    } catch (error) {
+      console.log('Could not get country from location');
+      setPhoneNumber(null);
+    }
+  };
+
   
   // Get data from navigation route
   const { 
@@ -70,17 +96,17 @@ const PlacesSearch = ({ route, navigation }) => {
       } else {
         // Regular text - enhanced warning detection
         const isEmergencyText = trimmedLine.toLowerCase().includes('emergency') || 
-                               trimmedLine.toLowerCase().includes('911') ||
-                               trimmedLine.toLowerCase().includes('immediately') ||
-                               trimmedLine.toLowerCase().includes('life-threatening') ||
-                               trimmedLine.toLowerCase().includes('warning') ||
-                               trimmedLine.toLowerCase().includes('urgent') ||
-                               trimmedLine.toLowerCase().includes('serious') ||
-                               trimmedLine.toLowerCase().includes('chest pain') ||
-                               trimmedLine.toLowerCase().includes('difficulty breathing') ||
-                               trimmedLine.toLowerCase().includes('severe') ||
-                               trimmedLine.startsWith('**WARNING:**') ||
-                               trimmedLine.includes('WARNING:');
+                                trimmedLine.toLowerCase().includes('911') ||
+                                trimmedLine.toLowerCase().includes('immediately') ||
+                                trimmedLine.toLowerCase().includes('life-threatening') ||
+                                trimmedLine.toLowerCase().includes('warning') ||
+                                trimmedLine.toLowerCase().includes('urgent') ||
+                                trimmedLine.toLowerCase().includes('serious') ||
+                                trimmedLine.toLowerCase().includes('chest pain') ||
+                                trimmedLine.toLowerCase().includes('difficulty breathing') ||
+                                trimmedLine.toLowerCase().includes('severe') ||
+                                trimmedLine.startsWith('**WARNING:**') ||
+                                trimmedLine.includes('WARNING:');
         
         elements.push(
           <Text key={key++} style={isEmergencyText ? styles.warningText : styles.regularText}>
@@ -148,6 +174,7 @@ const PlacesSearch = ({ route, navigation }) => {
 
       const destinationLat = detailsData.result.geometry.location.lat;
       const destinationLng = detailsData.result.geometry.location.lng;
+      setCountryFromLocation(destinationLat, destinationLng);
 
       const directionsResponse = await fetch(
         `${config.API_BASE_URL}/api/places/directions?origin_latitude=${latitude}&origin_longitude=${longitude}&destination_latitude=${destinationLat}&destination_longitude=${destinationLng}`
@@ -248,6 +275,20 @@ const PlacesSearch = ({ route, navigation }) => {
                 style={styles.navigationButton}
               />
             )}
+
+                        {/* Emergency call.  Trigerred only when its an emergency */}
+            {phoneNumber ? 
+            (
+              <Button
+              title={"SOS"}
+              variant='primary'
+              size='large'
+              onPress={() => Linking.openURL(`tel:${emergencyNumbers[phoneNumber]}`)}
+              style={styles.emergencyButton}
+              />
+            ) : 
+            (<Text></Text>)
+            }
           </View>
         )}
       </ScrollView>
@@ -387,6 +428,10 @@ const styles = StyleSheet.create({
   navigationButton: {
     marginTop: 20,
   },
+  emergencyButton: {
+    marginTop: 8,
+    backgroundColor: '#d32f2f',
+  },
   
   // Response formatting (keeping existing ones for Gemini response)
   sectionHeader: {
@@ -453,4 +498,5 @@ const styles = StyleSheet.create({
     height: 8,
   },
 });
- export default PlacesSearch;
+
+export default PlacesSearch;

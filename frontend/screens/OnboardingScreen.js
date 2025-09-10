@@ -3,14 +3,20 @@ import {
     View, 
     Text, 
     StyleSheet,
-    TouchableOpacity
+    TouchableOpacity,
+    Image
 } from 'react-native';
 import Button from '../components/Button';
 
 export default function OnboardingScreen({ navigation }) {
     return (
         <View style={styles.container}>
-            <Text style={styles.logo}>♡ Health-Routes</Text>
+            {/* <Text style={styles.logo}>♡ Health-Routes</Text> */}
+            <Image 
+                source={require('../assets/logo_health_routes.png')} 
+                style={styles.logo} 
+                resizeMode="contain"
+            />
             <Text style={styles.header}>Welcome to Health Routes</Text>
 
             {/* Login Button */}

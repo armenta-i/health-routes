@@ -43,7 +43,6 @@ export default function Login({navigation}) {
             // setErrorMessage('Login Successful');
             console.log('Login success: ', data);
             setLoading(false);
-            navigation.getParent().replace('Main');
 
             if (!data?.user) {
                 setErrorMessage('User not found');
