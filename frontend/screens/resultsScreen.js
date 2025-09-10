@@ -54,14 +54,22 @@ const PlacesSearch = ({ route, navigation }) => {
           </Text>
         );
       } else {
-        // Regular text
+        // Regular text - enhanced warning detection
         const isEmergencyText = trimmedLine.toLowerCase().includes('emergency') || 
                                trimmedLine.toLowerCase().includes('911') ||
                                trimmedLine.toLowerCase().includes('immediately') ||
-                               trimmedLine.toLowerCase().includes('life-threatening');
+                               trimmedLine.toLowerCase().includes('life-threatening') ||
+                               trimmedLine.toLowerCase().includes('warning') ||
+                               trimmedLine.toLowerCase().includes('urgent') ||
+                               trimmedLine.toLowerCase().includes('serious') ||
+                               trimmedLine.toLowerCase().includes('chest pain') ||
+                               trimmedLine.toLowerCase().includes('difficulty breathing') ||
+                               trimmedLine.toLowerCase().includes('severe') ||
+                               trimmedLine.startsWith('**WARNING:**') ||
+                               trimmedLine.includes('WARNING:');
         
         elements.push(
-          <Text key={key++} style={isEmergencyText ? styles.emergencyText : styles.regularText}>
+          <Text key={key++} style={isEmergencyText ? styles.warningText : styles.regularText}>
             {trimmedLine}
           </Text>
         );
@@ -403,7 +411,7 @@ const styles = StyleSheet.create({
     marginBottom: 8,
     lineHeight: 20,
   },
-  emergencyText: {
+  warningText: {
     fontSize: 14,
     color: '#d32f2f',
     fontWeight: 'bold',

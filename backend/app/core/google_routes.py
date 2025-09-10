@@ -19,6 +19,40 @@ if not GOOGLEMAPS_API_KEY:
     logger.error("GOOGLEMAPS_API_KEY not found in environment variables")
     raise ValueError("Google Maps API key is required")
 
+# Helper function to get country code from coordinates using reverse geocoding
+async def get_country_code_from_coordinates(latitude: float, longitude: float) -> str:
+    """
+    Get country code from coordinates using Google Geocoding API
+    Returns 2-letter country code (e.g., 'US', 'CA', 'MX')
+    """
+    try:
+        url = "https://maps.googleapis.com/maps/api/geocode/json"
+        params = {
+            "latlng": f"{latitude},{longitude}",
+            "key": GOOGLEMAPS_API_KEY,
+            "result_type": "country"
+        }
+        
+        async with httpx.AsyncClient(timeout=10.0) as client:
+            response = await client.get(url, params=params)
+            
+            if response.status_code == 200:
+                data = response.json()
+                if data.get('status') == 'OK' and data.get('results'):
+                    # Extract country code from the first result
+                    for component in data['results'][0].get('address_components', []):
+                        if 'country' in component.get('types', []):
+                            country_code = component.get('short_name', 'US')
+                            logger.info(f"Found country code: {country_code} for coordinates ({latitude}, {longitude})")
+                            return country_code
+                            
+        logger.warning(f"Could not determine country code for coordinates ({latitude}, {longitude}), defaulting to US")
+        return 'US'  # Default fallback
+        
+    except Exception as e:
+        logger.error(f"Error getting country code: {str(e)}, defaulting to US")
+        return 'US'  # Default fallback
+
 # ---------------------------------
 # 1. Places Nearby Search
 # ---------------------------------
@@ -47,7 +81,7 @@ async def get_nearby_places(
         # New Places API (New) format
         url = "https://places.googleapis.com/v1/places:searchNearby"
         
-        # Request body for new API
+        # Request body for new API with country restriction
         request_body = {
             "includedTypes": [place_type.lower()],
             "maxResultCount": 20,
@@ -59,7 +93,8 @@ async def get_nearby_places(
                     },
                     "radius": radius
                 }
-            }
+            },
+            "regionCode": await get_country_code_from_coordinates(latitude, longitude)
         }
         
         headers = {

@@ -41,16 +41,29 @@ def get_medical_advice(address: str, health_problems: str, language: str) -> str
     - Symptoms or Issues: {health_problems}
     - Preferred Language: {language}
     
-    You must:
-    1. Analyze and determine a condition the user may be suffering from.
-    2. Determine who should the user see (the doctor specialty)
-    3. Remedies that the user can do.
-    4. If symptoms are severe (e.g., chest pain, breathing problems), prioritize Emergency Rooms first.
-    5. (Optional) Add a short sentence encouraging the user to seek help immediately if the symptoms are serious.
-    
-    Formatting:
-    Respond in the language that matches the user's request (English or Spanish).
-    Be helpful, reassuring, and professional.
+    Please provide your response using this EXACT format:
+
+    **1. Possible Condition:**
+    [Describe the likely condition based on symptoms]
+
+    **2. Recommended Healthcare Provider:**
+    [Specify what type of doctor or healthcare facility to visit]
+
+    **3. Home Remedies & Self-Care:**
+    [List practical home remedies and self-care measures]
+
+    **4. When to Seek Immediate Care:**
+    **WARNING:** [List specific warning signs that require emergency care, starting each with "WARNING:"]
+
+    **5. Next Steps:**
+    [Provide clear next steps for the user]
+
+    Important formatting rules:
+    - Start any emergency/warning text with "**WARNING:**" to ensure it appears in red
+    - Use bullet points (*) for lists 
+    - Keep sections concise but informative
+    - Respond in the language that matches the user's request ({language})
+    - Be professional and reassuring
     """
     
     print(f"Prompt length: {len(prompt)} characters")
@@ -127,16 +140,29 @@ async def get_medical_advice_async(address: str, health_problems: str, language:
     - Symptoms or Issues: {health_problems}
     - Preferred Language: {language}
     
-    You must:
-    1. Analyze and determine a condition the user may be suffering from.
-    2. Determine who should the user see (the doctor specialty)
-    3. Remedies that the user can do.
-    4. If symptoms are severe (e.g., chest pain, breathing problems), prioritize Emergency Rooms first.
-    5. (Optional) Add a short sentence encouraging the user to seek help immediately if the symptoms are serious.
-    
-    Formatting:
-    Respond in the language that matches the user's request (English or Spanish).
-    Be helpful, reassuring, and professional.
+    Please provide your response using this EXACT format:
+
+    **1. Possible Condition:**
+    [Describe the likely condition based on symptoms]
+
+    **2. Recommended Healthcare Provider:**
+    [Specify what type of doctor or healthcare facility to visit]
+
+    **3. Home Remedies & Self-Care:**
+    [List practical home remedies and self-care measures]
+
+    **4. When to Seek Immediate Care:**
+    **WARNING:** [List specific warning signs that require emergency care, starting each with "WARNING:"]
+
+    **5. Next Steps:**
+    [Provide clear next steps for the user]
+
+    Important formatting rules:
+    - Start any emergency/warning text with "**WARNING:**" to ensure it appears in red
+    - Use bullet points (*) for lists 
+    - Keep sections concise but informative
+    - Respond in the language that matches the user's request ({language})
+    - Be professional and reassuring
     """
     
     try:

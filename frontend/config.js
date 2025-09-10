@@ -1,4 +1,4 @@
-const API_BASE_URL = process.env.API_BASE_URL || 'http://172.20.44.195:8000';
+const API_BASE_URL = process.env.API_BASE_URL || 'http://192.168.1.7:8000';
 //'http://192.168.1.7:8001';
 
 export default {
