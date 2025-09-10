@@ -13,11 +13,11 @@ logger = logging.getLogger(__name__)
 
 # Load API Key
 load_dotenv()
-# GOOGLEMAPS_API_KEY = os.getenv("GOOGLEMAPS_API_KEY")
+GOOGLEMAPS_API_KEY = os.getenv("GOOGLEMAPS_API_KEY")
 
-# if not GOOGLEMAPS_API_KEY:
-#     logger.error("GOOGLEMAPS_API_KEY not found in environment variables")
-#     raise ValueError("Google Maps API key is required")
+if not GOOGLEMAPS_API_KEY:
+    logger.error("GOOGLEMAPS_API_KEY not found in environment variables")
+    raise ValueError("Google Maps API key is required")
 
 # Helper function to get country code from coordinates using reverse geocoding
 async def get_country_code_from_coordinates(latitude: float, longitude: float) -> str:

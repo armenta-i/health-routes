@@ -8,6 +8,7 @@ import {
     ActivityIndicator,
 } from "react-native";
 import { supabase } from "../supabase";
+import Button from '../components/Button';
 
 export default function CreateUser({ navigation }) {
     const [email, setEmail] = useState("");
@@ -41,6 +42,7 @@ export default function CreateUser({ navigation }) {
 
     return (
         <View style={styles.container}>
+        <Text style={styles.logo}>♡ Health-Routes</Text>
         <Text style={styles.header}>Create Account</Text>
 
         {errorMessage ? <Text style={styles.errorText}>{errorMessage}</Text> : null}
@@ -59,13 +61,14 @@ export default function CreateUser({ navigation }) {
             secureTextEntry
         />
 
-        <TouchableOpacity onPress={handleSignup} style={styles.button}>
-            {loading ? (
-            <ActivityIndicator size="small" color="#fff" />
-            ) : (
-            <Text style={styles.buttonText}>Sign Up</Text>
-            )}
-        </TouchableOpacity>
+        <Button
+            title="Sign Up"
+            variant="primary"
+            size="large"
+            onPress={handleSignup}
+            loading={loading}
+            style={styles.button}
+        />
 
         <TouchableOpacity onPress={() => navigation.navigate("Login")}>
             <Text style={styles.navLink}>Already have an account? Login</Text>
@@ -75,7 +78,19 @@ export default function CreateUser({ navigation }) {
     }
 
     const styles = StyleSheet.create({
-    container: { flex: 1, padding: 20, justifyContent: "center" },
+    container: { 
+        flex: 1, 
+        padding: 24, 
+        paddingTop: 60,
+        justifyContent: "center",
+        backgroundColor: '#fff'
+    },
+    logo: {
+        fontSize: 24,
+        fontWeight: '600',
+        marginBottom: 40,
+        textAlign: 'center',
+    },
     input: {
         height: 40,
         borderColor: "gray",
@@ -84,15 +99,10 @@ export default function CreateUser({ navigation }) {
         paddingHorizontal: 10,
         borderRadius: 5,
     },
-    header: { textAlign: "center", fontSize: 24, fontWeight: "bold", marginBottom: 20 },
+    header: { textAlign: "center", fontSize: 32, fontWeight: "bold", marginBottom: 32 },
     button: {
-        backgroundColor: "#000",
-        paddingVertical: 12,
-        borderRadius: 5,
-        alignItems: "center",
         marginBottom: 20,
     },
-    buttonText: { color: "#fff", fontWeight: "bold", fontSize: 16 },
     navLink: { color: "grey", textAlign: "center" },
     errorText: { color: "red", textAlign: "center", marginBottom: 10 },
 });

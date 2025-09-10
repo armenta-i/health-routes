@@ -11,6 +11,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { AuthContext } from '../context/AuthContext';
 import config from '../config';
 import { supabase } from "../supabase";
+import Button from '../components/Button';
 
 export default function Login({navigation}) {
     const [phoneNumber, setPhoneNumber] = useState('');
@@ -57,6 +58,7 @@ export default function Login({navigation}) {
 
     return (
         <View style={styles.container}>
+            <Text style={styles.logo}>♡ Health-Routes</Text>
             <Text style={styles.header}>Login</Text>
 
             {errorMessage ? <Text style={styles.errorText}>{errorMessage}</Text> : null}
@@ -75,16 +77,14 @@ export default function Login({navigation}) {
                 secureTextEntry={true}
             />
 
-            <TouchableOpacity
+            <Button
+                title="Login"
+                variant="primary"
+                size="large"
                 onPress={handleLogin}
+                loading={loading}
                 style={styles.button}
-            >
-                {loading ? (
-                    <ActivityIndicator size={"small"} color="#ffffff"/> 
-                ) : (
-                    <Text style={styles.buttonText}>Login</Text>
-                )}
-            </TouchableOpacity>
+            />
 
             <TouchableOpacity
                 onPressIn={() => setLinkPressed(true)}
@@ -102,10 +102,17 @@ export default function Login({navigation}) {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        padding: 20,
-        paddingTop: 10,
+        padding: 24,
+        paddingTop: 60,
         justifyContent: 'center',
         alignItems: 'center',
+        backgroundColor: '#fff',
+    },
+    logo: {
+        fontSize: 24,
+        fontWeight: '600',
+        marginBottom: 40,
+        textAlign: 'center',
     },
     input: {
         height: 40,
@@ -118,23 +125,13 @@ const styles = StyleSheet.create({
     },
     header: {
         textAlign: 'center',
-        fontSize: 24,
+        fontSize: 32,
         fontWeight: 'bold',
-        marginBottom: 20,
+        marginBottom: 32,
     },
     button: {
-        backgroundColor: '#000000',
-        paddingVertical: 12,
-        paddingHorizontal: 24,
-        borderRadius: 5,
         width: '100%',
-        alignItems: 'center',
         marginBottom: 20,
-    },
-    buttonText: {
-        color: 'white',
-        fontWeight: 'bold',
-        fontSize: 16,
     },
     navLink: {
         color: 'grey',

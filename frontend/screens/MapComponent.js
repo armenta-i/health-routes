@@ -4,6 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import MapView, { Marker, Polyline } from 'react-native-maps';
 import * as Location from 'expo-location';
 import config from '../config';
+import Button from '../components/Button';
 
 const MapComponent = ({ 
   destination: propDestination, 
@@ -239,9 +240,13 @@ const MapComponent = ({
 
       {/* Top Header with Navigation */}
       <View style={styles.topHeader}>
-        <TouchableOpacity style={styles.backButton} onPress={onBackPress}>
-          <Text style={styles.backButtonText}>← Back</Text>
-        </TouchableOpacity>
+        <Button
+          title="← Back"
+          variant="primary"
+          size="small"
+          onPress={onBackPress}
+          style={styles.backButton}
+        />
       </View>
 
       {/* Hospital Info Card */}
@@ -280,21 +285,22 @@ const MapComponent = ({
 
         {/* Action Buttons */}
         <View style={styles.actionButtons}>
-          <TouchableOpacity 
-            style={styles.directionsListButton} 
+          <Button
+            title="View All Steps"
+            variant="primary"
+            size="medium"
             onPress={() => setShowDirectionsList(true)}
-          >
-            <Text style={styles.buttonText}> View All Steps</Text>
-          </TouchableOpacity>
+            style={styles.directionsListButton}
+          />
 
-          <TouchableOpacity 
-            style={isNavigating ? styles.stopButton : styles.startButton} 
+          <Button
+            title={isNavigating ? "Stop Navigation" : "Start Navigation"}
+            variant="primary"
+            size="medium"
             onPress={isNavigating ? stopNavigation : startNavigation}
-          >
-            <Text style={styles.buttonText}>
-              {isNavigating ? "Stop" : "Start Navigation"}
-            </Text>
-          </TouchableOpacity>
+            style={[styles.navigationActionButton, isNavigating && styles.activeNavigationButton]}
+            textStyle={isNavigating && styles.activeNavigationButtonText}
+          />
         </View>
       </View>
 
@@ -380,20 +386,11 @@ const styles = StyleSheet.create({
     zIndex: 10,
   },
   backButton: {
-    backgroundColor: '#000',
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    borderRadius: 20,
     elevation: 5,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
-  },
-  backButtonText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: 'bold',
   },
   // Hospital Info Card
   hospitalInfoCard: {
@@ -471,51 +468,31 @@ const styles = StyleSheet.create({
   actionButtons: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-  },
-  startButton: {
-    backgroundColor: '#00AA00',
-    paddingHorizontal: 20, // Reduced from 25
-    paddingVertical: 12, // Reduced from 15
-    borderRadius: 25,
-    flex: 1,
-    marginLeft: 10,
-    elevation: 5,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-  },
-  stopButton: {
-    backgroundColor: '#FF3B30',
-    paddingHorizontal: 20, // Reduced from 25
-    paddingVertical: 12, // Reduced from 15
-    borderRadius: 25,
-    flex: 1,
-    marginLeft: 10,
-    elevation: 5,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
+    gap: 12,
   },
   directionsListButton: {
-    backgroundColor: '#007AFF',
-    paddingHorizontal: 15, // Reduced from 20
-    paddingVertical: 12, // Reduced from 15
-    borderRadius: 25,
     flex: 1,
-    marginRight: 10,
     elevation: 5,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
   },
-  buttonText: {
-    color: 'white',
-    fontSize: 16,
-    fontWeight: 'bold',
-    textAlign: 'center',
+  navigationActionButton: {
+    flex: 1,
+    elevation: 5,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+  },
+  activeNavigationButton: {
+    backgroundColor: '#fff',
+    borderWidth: 2,
+    borderColor: '#000',
+  },
+  activeNavigationButtonText: {
+    color: '#000',
   },
 
   // Modal Styles

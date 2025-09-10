@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -13,7 +13,9 @@ import {
   Modal,
   FlatList,
 } from 'react-native';
+import * as Location from 'expo-location';
 import config from '../config';
+import Button from '../components/Button';
 
 const screenWidth = Dimensions.get('window').width;
 
@@ -43,6 +45,8 @@ const languages = [
 export default function MedicalForm({ navigation }) {
   const [selectedTab, setSelectedTab] = useState('basic');
   const [location, setLocation] = useState('');
+  const [currentLocation, setCurrentLocation] = useState(null);
+  const [locationLoading, setLocationLoading] = useState(false);
   const [language, setLanguage] = useState('');
   const [medicalIssue, setMedicalIssue] = useState('');
   const [howAreYou, setHowAreYou] = useState('');
@@ -53,6 +57,64 @@ export default function MedicalForm({ navigation }) {
     setLanguage(selectedLanguage);
     setShowLanguageModal(false);
   };
+
+  const getCurrentLocation = async () => {
+    setLocationLoading(true);
+    try {
+      // Request permissions
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== 'granted') {
+        Alert.alert(
+          'Permission Denied',
+          'Location permission is required to find nearby healthcare providers automatically.',
+          [
+            { text: 'OK', style: 'default' }
+          ]
+        );
+        setLocationLoading(false);
+        return;
+      }
+
+      // Get current position
+      let currentPosition = await Location.getCurrentPositionAsync({
+        accuracy: Location.Accuracy.High,
+      });
+
+      const { latitude, longitude } = currentPosition.coords;
+      setCurrentLocation({ latitude, longitude });
+
+      // Reverse geocode to get address
+      let reverseGeocode = await Location.reverseGeocodeAsync({
+        latitude,
+        longitude,
+      });
+
+      if (reverseGeocode.length > 0) {
+        const address = reverseGeocode[0];
+        const formattedAddress = `${address.street || ''} ${address.city || ''}, ${address.region || ''} ${address.postalCode || ''}`.trim();
+        setLocation(formattedAddress || `${latitude.toFixed(4)}, ${longitude.toFixed(4)}`);
+      } else {
+        setLocation(`${latitude.toFixed(4)}, ${longitude.toFixed(4)}`);
+      }
+
+    } catch (error) {
+      console.error('Error getting location:', error);
+      Alert.alert(
+        'Location Error',
+        'Unable to get your current location. Please enter your location manually.',
+        [
+          { text: 'OK', style: 'default' }
+        ]
+      );
+    } finally {
+      setLocationLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    // Automatically get location when component mounts
+    getCurrentLocation();
+  }, []);
 
   const handleSubmit = async () => {
     // Validation
@@ -106,13 +168,14 @@ export default function MedicalForm({ navigation }) {
     <SafeAreaView style={styles.safeArea}>
       {/* Top Header */}
       <View style={styles.headerContainer}>
-        <View style={styles.headerSpacer} />
-        <TouchableOpacity
+        <Text style={styles.logo}>♡ Health-Routes</Text>
+        <Button
+          title="Home"
+          variant="primary"
+          size="small"
+          onPress={() => navigation.navigate('LandingPage')}
           style={styles.homeButton}
-          onPress={() => navigation.navigate('LandingPage')} // <-- Update 'LandingPage' to your landing page route
-        >
-          <Text style={styles.homeButtonText}>Home</Text>
-        </TouchableOpacity>
+        />
       </View>
 
       <ScrollView contentContainerStyle={styles.container}>
@@ -124,15 +187,34 @@ export default function MedicalForm({ navigation }) {
         {/* Basic Info Section */}
         {selectedTab === 'basic' && (
           <View style={styles.formSection}>
-            <Text style={styles.label}>Location</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="Enter your city, zip code, or address"
-              value={location}
-              onChangeText={setLocation}
-            />
+            <Text style={styles.label}>Your Current Location</Text>
+            <View style={styles.locationDisplayContainer}>
+              <View style={styles.locationDisplay}>
+                {locationLoading ? (
+                  <View style={styles.locationLoadingContainer}>
+                    <ActivityIndicator size="small" color="#666" />
+                    <Text style={styles.locationLoadingText}>Getting your location...</Text>
+                  </View>
+                ) : (
+                  <Text style={styles.locationText}>
+                     {location || "Location not detected"}
+                  </Text>
+                )}
+              </View>
+              <Button
+                title="Refresh"
+                variant="secondary"
+                size="small"
+                onPress={getCurrentLocation}
+                loading={locationLoading}
+                style={styles.refreshLocationButton}
+              />
+            </View>
             <Text style={styles.helperText}>
-              We'll use this to find healthcare options near you.
+              {locationLoading 
+                ? "Detecting your current location automatically..."
+                : "We automatically detected your location to find nearby healthcare options."
+              }
             </Text>
 
             <Text style={styles.label}>Preferred Language</Text>
@@ -164,20 +246,15 @@ export default function MedicalForm({ navigation }) {
         )}
 
         {/* Submit Button */}
-        <TouchableOpacity 
-          style={[styles.submitButton, loading && styles.submitButtonDisabled]} 
+        <Button
+          title="Get Medical Advice"
+          variant="primary"
+          size="large"
           onPress={handleSubmit}
           disabled={loading}
-        >
-          {loading ? (
-            <View style={styles.loadingContainer}>
-              <ActivityIndicator color="white" size="small" />
-              <Text style={styles.submitButtonText}>Getting Medical Advice...</Text>
-            </View>
-          ) : (
-            <Text style={styles.submitButtonText}>Get Medical Advice</Text>
-          )}
-        </TouchableOpacity>
+          loading={loading}
+          style={styles.submitButton}
+        />
       </ScrollView>
 
       {/* Language Selection Modal */}
@@ -230,23 +307,17 @@ const styles = StyleSheet.create({
   },
   headerContainer: {
     flexDirection: 'row',
-    justifyContent: 'flex-end',
+    justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: 16,
-    paddingTop: 10,
+    paddingHorizontal: 24,
+    paddingVertical: 16,
   },
-  headerSpacer: {
-    flex: 1,
+  logo: {
+    fontSize: 20,
+    fontWeight: '600',
   },
   homeButton: {
-    backgroundColor: '#000',
-    paddingVertical: 8,
-    paddingHorizontal: 16,
-    borderRadius: 20,
-  },
-  homeButtonText: {
-    color: '#fff',
-    fontWeight: 'bold',
+    borderRadius: 8,
   },
   container: {
     padding: 24,
@@ -278,6 +349,42 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     marginBottom: 8,
     fontSize: 16
+  },
+  locationDisplayContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    marginBottom: 8,
+  },
+  locationDisplay: {
+    flex: 1,
+    borderWidth: 1,
+    borderColor: '#e0e0e0',
+    borderRadius: 8,
+    paddingHorizontal: 12,
+    paddingVertical: 12,
+    backgroundColor: '#f8f9fa',
+    minHeight: 44,
+    justifyContent: 'center',
+  },
+  locationText: {
+    fontSize: 16,
+    color: '#333',
+    fontWeight: '500',
+  },
+  locationLoadingContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  locationLoadingText: {
+    fontSize: 16,
+    color: '#666',
+    fontStyle: 'italic',
+  },
+  refreshLocationButton: {
+    minWidth: 70,
+    paddingHorizontal: 8,
   },
   textArea: {
     borderWidth: 1,
@@ -320,24 +427,7 @@ const styles = StyleSheet.create({
     marginBottom: 16
   },
   submitButton: {
-    backgroundColor: 'black',
-    paddingVertical: 16,
-    borderRadius: 8,
-    alignItems: 'center',
-    marginTop: 10
-  },
-  submitButtonText: {
-    color: 'white',
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
-  submitButtonDisabled: {
-    opacity: 0.7,
-  },
-  loadingContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
+    marginTop: 20,
   },
   
   // Modal Styles

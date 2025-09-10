@@ -5,27 +5,31 @@ import {
     StyleSheet,
     TouchableOpacity
 } from 'react-native';
+import Button from '../components/Button';
 
 export default function OnboardingScreen({ navigation }) {
     return (
         <View style={styles.container}>
+            <Text style={styles.logo}>♡ Health-Routes</Text>
             <Text style={styles.header}>Welcome to Health Routes</Text>
 
             {/* Login Button */}
-            <TouchableOpacity
-                style={styles.button}
+            <Button
+                title="Login"
+                variant="primary"
+                size="large"
                 onPress={() => navigation.navigate('Login')}
-            >
-                <Text style={styles.buttonText}>Login</Text>
-            </TouchableOpacity>
+                style={styles.button}
+            />
 
             {/* Create Account Button */}
-            <TouchableOpacity
-                style={styles.button}
+            <Button
+                title="Create Account"
+                variant="primary"
+                size="large"
                 onPress={() => navigation.navigate('CreateUser')}
-            >
-                <Text style={styles.buttonText}>Create Account</Text>
-            </TouchableOpacity>
+                style={styles.button}
+            />
         </View>
     );
 }
@@ -33,30 +37,27 @@ export default function OnboardingScreen({ navigation }) {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        padding: 20,
+        padding: 24,
+        paddingTop: 60,
         justifyContent: 'center',
         alignItems: 'center',
         backgroundColor: '#f5f5f5',
     },
+    logo: {
+        fontSize: 28,
+        fontWeight: '600',
+        marginBottom: 20,
+        textAlign: 'center',
+    },
     header: {
         textAlign: 'center',
-        fontSize: 28,
+        fontSize: 32,
         fontWeight: 'bold',
-        marginBottom: 40,
+        marginBottom: 48,
         color: '#000000',
     },
     button: {
-        backgroundColor: '#000000',
-        paddingVertical: 14,
-        paddingHorizontal: 24,
-        borderRadius: 8,
         width: '80%',
-        alignItems: 'center',
         marginBottom: 20,
-    },
-    buttonText: {
-        color: 'white',
-        fontSize: 16,
-        fontWeight: 'bold',
     },
 });

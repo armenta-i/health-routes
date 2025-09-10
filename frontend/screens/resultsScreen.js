@@ -5,6 +5,7 @@ import CompassComponent from './CompassComponent';
 import * as Location from 'expo-location';
 import config from '../config';
 import MapComponent from './MapComponent';
+import Button from '../components/Button';
 
 const PlacesSearch = ({ route, navigation }) => {
   const [location, setLocation] = useState(null);
@@ -169,13 +170,13 @@ const PlacesSearch = ({ route, navigation }) => {
     <SafeAreaView style={styles.safeArea}>
       {/* Top Header */}
       <View style={styles.headerContainer}>
-        <View style={styles.headerSpacer} />
-        <TouchableOpacity
-          style={styles.homeButton}
+        <Text style={styles.logo}>♡ Health-Routes</Text>
+        <Button
+          title="← Back"
+          variant="nav"
+          size="small"
           onPress={() => navigation.goBack()}
-        >
-          <Text style={styles.homeButtonText}>← Back</Text>
-        </TouchableOpacity>
+        />
       </View>
 
       <ScrollView style={styles.container}>
@@ -231,12 +232,13 @@ const PlacesSearch = ({ route, navigation }) => {
             
             {/* Navigation Button */}
             {directions.length > 0 && (
-              <TouchableOpacity
-                style={styles.navigationButton}
+              <Button
+                title="Get Directions →"
+                variant="primary"
+                size="large"
                 onPress={() => setScreen('directions')}
-              >
-                <Text style={styles.navigationButtonText}>Get Directions</Text>
-              </TouchableOpacity>
+                style={styles.navigationButton}
+              />
             )}
           </View>
         )}
@@ -253,23 +255,14 @@ const styles = StyleSheet.create({
   },
   headerContainer: {
     flexDirection: 'row',
-    justifyContent: 'flex-end',
+    justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: 16,
-    paddingTop: 10,
+    paddingHorizontal: 24,
+    paddingVertical: 16,
   },
-  headerSpacer: {
-    flex: 1,
-  },
-  homeButton: {
-    backgroundColor: '#000',
-    paddingVertical: 8,
-    paddingHorizontal: 16,
-    borderRadius: 20,
-  },
-  homeButtonText: {
-    color: '#fff',
-    fontWeight: 'bold',
+  logo: {
+    fontSize: 20,
+    fontWeight: '600',
   },
   container: {
     flex: 1,
@@ -277,15 +270,15 @@ const styles = StyleSheet.create({
     paddingBottom: 40
   },
   title: {
-    fontSize: 26,
+    fontSize: 32,
     fontWeight: 'bold',
-    marginBottom: 8,
+    marginBottom: 16,
     color: '#000'
   },
   subtitle: {
     fontSize: 16,
     color: '#666',
-    marginBottom: 24,
+    marginBottom: 32,
     lineHeight: 22
   },
   
@@ -355,15 +348,21 @@ const styles = StyleSheet.create({
   
   // Hospital Section
   hospitalSection: {
+    backgroundColor: '#f5f5f5',
+    borderRadius: 12,
+    padding: 24,
     marginBottom: 32,
   },
   hospitalCard: {
-    backgroundColor: '#f8f9fa',
+    backgroundColor: '#fff',
     borderRadius: 12,
     padding: 20,
     marginBottom: 16,
-    borderWidth: 1,
-    borderColor: '#e9ecef',
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
   },
   hospitalName: {
     fontSize: 18,
@@ -378,15 +377,7 @@ const styles = StyleSheet.create({
     lineHeight: 20
   },
   navigationButton: {
-    backgroundColor: '#000',
-    paddingVertical: 16,
-    borderRadius: 8,
-    alignItems: 'center',
-  },
-  navigationButtonText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: 'bold',
+    marginTop: 8,
   },
   
   // Response formatting (keeping existing ones for Gemini response)
